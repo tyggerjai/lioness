@@ -6,6 +6,10 @@ import re
 DEBUG_LEVEL = 2
 
 mytoken = ""
+with open("API.key") as api:
+	mytoken = api.readline().strip()
+	api.close()
+
 sc = SlackClient(mytoken)
 
 _connect = 1
