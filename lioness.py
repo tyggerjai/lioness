@@ -36,7 +36,7 @@ def connect_to_server():
 	return 0
 
 def disconnect():
-	sc.rtm_disconnect()
+	#sc.rtm_disconnect()
 
 
 def ping_owners(message):
