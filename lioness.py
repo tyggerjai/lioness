@@ -5,7 +5,7 @@ import re
 
 DEBUG_LEVEL = 2
 
-mytoken = "xoxb-42344808805-HKEXbDbiEZjSd7LKHEXgFCE4"
+mytoken = ""
 sc = SlackClient(mytoken)
 
 _connect = 1
