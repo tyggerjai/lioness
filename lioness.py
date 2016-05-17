@@ -10,6 +10,7 @@ with open("API.key") as api:
 	mytoken = api.readline().strip()
 	api.close()
 
+
 sc = SlackClient(mytoken)
 
 _connect = 1
@@ -20,6 +21,7 @@ owners = {'tyggerjai':
 		}
 
 		}
+
 
 
 ops = [owners[own]['id'] for own in owners.keys()]
@@ -36,6 +38,7 @@ def connect_to_server():
 	return 0
 
 def disconnect():
+	return 1
 	#sc.rtm_disconnect()
 
 
@@ -44,24 +47,35 @@ def ping_owners(message):
 		own = owners[owner]
 		resp = sc.api_call("im.open", user = own['id'])
 		own['chat'] = resp['channel']['id']
-
-		print(sc.api_call("chat.postMessage", as_user="true:", channel=own['chat'], text=message))
-
+		debug(1, "Pinging owner {}".format(own))
+		debug(1,sc.api_call("chat.postMessage", as_user="true:", channel=own['chat'], text=message))
 
 
 
 
 print("Starting ... \n")
 print("My owners are: ")
+
 for own in owners.keys():
 	print(own)
 
-if (connect_to_server):
-	
+if (connect_to_server()):
+	debug(1, "Checking API")
 	debug (1, sc.api_call("api.test"))
 	
 
-	print("sending")
+	
+
+
+	chans = sc.api_call("channels.list")
+	for k,v in chans.items():
+		chan_list.add(v)
+
+	if DEBUG_LEVEL > 2:
+		debug(2, "Chanlist")
+		for chan in chans['channels']:
+			debug(2,"{} : {}".format(chan['name'], chan['id']))
+
 	resp = sc.api_call(
     	"chat.postMessage", channel="#bot_testing", text="boop",
     	 username="lioness", icon_url="https://avatars.slack-edge.com/2016-05-12/42349083605_6f1c7e1101ff3fb069d3_48.png"
@@ -75,10 +89,7 @@ if (connect_to_server):
 	
 	debug(0,"Timestamp: {}".format(ts))
 
-	chans = sc.api_call("channels.list")
-	for chan in chans['channels']:
-		print("{} : {}".format(chan['name'], chan['id']))
-
+	
 
 	while(_connect):
 
@@ -98,7 +109,7 @@ if (connect_to_server):
 		
 		for msg in resp['messages']:
 			if (float(msg['ts']) > float(ts)):
-				debug(1, "Setting timestamp".format(ts))
+				debug(0, "Setting timestamp".format(ts))
 				ts = msg['ts']
 			user = msg.get('user')
 			if (re.match('!', msg.get('text'))):
