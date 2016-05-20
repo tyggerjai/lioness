@@ -3,7 +3,7 @@ from slackclient import SlackClient
 import re
 
 
-DEBUG_LEVEL = 2
+DEBUG_LEVEL = 3
 
 mytoken = ""
 with open("API.key") as api:
@@ -16,13 +16,17 @@ sc = SlackClient(mytoken)
 _connect = 1
 
 owners = {'tyggerjai':
-		 {
-		 'id': 'U189HEXD5', 
-		}
+		 	{
+		 	'id': 'U189HEXD5', 
+			}
 
 		}
-
-
+channels = { "join": ("bot_testing"),
+			"known": list(),
+			"watching": list()
+	}
+print("Channels to join:")
+print(channels['join'])
 
 ops = [owners[own]['id'] for own in owners.keys()]
 
@@ -40,6 +44,12 @@ def connect_to_server():
 def disconnect():
 	return 1
 	#sc.rtm_disconnect()
+
+def chanpost(mychannel, message):
+	resp = sc.api_call(
+    	"chat.postMessage", channel=mychannel, text=message,
+    	 username="lioness", icon_url="https://avatars.slack-edge.com/2016-05-12/42349083605_6f1c7e1101ff3fb069d3_48.png"
+	)
 
 
 def ping_owners(message):
@@ -68,14 +78,20 @@ if (connect_to_server()):
 
 
 	chans = sc.api_call("channels.list")
-	for k,v in chans.items():
-		chan_list.add(v)
+		
+	for chan in chans['channels']:
+		debug(3,"{} : {}".format(chan['name'], chan['id']))
+		channels['known'].append(chan['name'])
 
-	if DEBUG_LEVEL > 2:
-		debug(2, "Chanlist")
-		for chan in chans['channels']:
-			debug(2,"{} : {}".format(chan['name'], chan['id']))
+		if (chan['name'] in channels['join']):
 
+			debug(2, "Found watching channel {}".format(chan['name']))
+			channels['watching'].append(chan['id'])
+
+	for chan in channels['watching']:
+		debug(3,"Watching {}".format(chan))		
+
+		
 	resp = sc.api_call(
     	"chat.postMessage", channel="#bot_testing", text="boop",
     	 username="lioness", icon_url="https://avatars.slack-edge.com/2016-05-12/42349083605_6f1c7e1101ff3fb069d3_48.png"
@@ -103,25 +119,37 @@ if (connect_to_server()):
 
 		time.sleep(1)
 
-		resp = sc.api_call("channels.history",
-			channel="C1895HN20", oldest = ts 
-			)
-		
-		for msg in resp['messages']:
-			if (float(msg['ts']) > float(ts)):
-				debug(0, "Setting timestamp".format(ts))
-				ts = msg['ts']
-			user = msg.get('user')
-			if (re.match('!', msg.get('text'))):
+		for chan in channels['watching']:
+			resp = sc.api_call("channels.history",
+				channel=chan, oldest = ts 
+				)
+			
+			for msg in resp['messages']:
+				if (float(msg['ts']) > float(ts)):
+					debug(0, "Setting timestamp".format(ts))
+					ts = msg['ts']
+				user = msg.get('user')
+				if (re.match('!', msg.get('text'))):
 
-				print("Message from {}".format(user))
-				print(msg)
-				if (user in ops):
-					if (msg['text'] == '!die'):
-						print("{} says die!".format(user))
-						_connect = 0
-					elif (msg['text'] == '!hup'):
-						_connect = 2
+					print("Message from {}".format(user))
+					print(msg)
+					if (user in ops):
+						if (re.match("!", msg['text'])):
+							if (msg['text'] == '!die'):
+								print("{} says die!".format(user))
+								_connect = 0
+							elif (msg['text'] == '!hup'):
+								_connect = 2
+							elif (re.match( "!debug", msg['text']) ):
+								try:
+									lev = int(msg['text'].split()[1])
+									DEBUG_LEVEL = lev
+									chanpost("#bot_testing", "Setting debug level to {}".format(lev))
+								except:
+									chanpost("#bot_testing", "Cannot set level {}".format(lev))
+
+
+
 		
 
 
