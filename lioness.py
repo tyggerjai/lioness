@@ -1,9 +1,16 @@
 import time
 from slackclient import SlackClient
 import re
+from channel import ChannelManager
+from users import UserManager
+from plugins.base import PluginManager
 
 
 DEBUG_LEVEL = 3
+
+def debug(level, message):
+	if (level < DEBUG_LEVEL):
+		print(message)
 
 mytoken = ""
 with open("API.key") as api:
@@ -11,28 +18,25 @@ with open("API.key") as api:
 	api.close()
 
 
+debug(0, "+++++++++++++++++++++++++++++\n++STARTING\n")
+
 sc = SlackClient(mytoken)
 
 _connect = 1
+chan = ChannelManager()
+channels = chan.getChannels()
 
-owners = {'tyggerjai':
-		 	{
-		 	'id': 'U189HEXD5', 
-			}
+people = UserManager()
+owners = people.getOwners()
 
-		}
-channels = { "join": ("bot_testing"),
-			"known": list(),
-			"watching": list()
-	}
-print("Channels to join:")
-print(channels['join'])
+plugin = PluginManager()
+plugins = plugin.getPlugins()
+
+debug(1,"Channels to join:")
+debug(1,channels['join'])
 
 ops = [owners[own]['id'] for own in owners.keys()]
 
-def debug(level, message):
-	if (level < DEBUG_LEVEL):
-		print(message)
 
 def connect_to_server():
 	
@@ -42,8 +46,8 @@ def connect_to_server():
 	return 0
 
 def disconnect():
-	return 1
 	#sc.rtm_disconnect()
+	return 1
 
 def chanpost(mychannel, message):
 	resp = sc.api_call(
@@ -63,16 +67,19 @@ def ping_owners(message):
 
 
 
-print("Starting ... \n")
-print("My owners are: ")
+debug(1,"Starting ... \n")
+debug(1,"My owners are: ")
 
 for own in owners.keys():
-	print(own)
+	debug(1, own)
 
 if (connect_to_server()):
+
+
 	debug(1, "Checking API")
 	debug (1, sc.api_call("api.test"))
-	
+	#DEBUG_LEVEL = 0
+
 
 	
 
@@ -98,7 +105,7 @@ if (connect_to_server()):
 	)
 
 	for k,v in resp.items():
-		debug(3,print("Key: {} Value: {} \n".format(k, v)))
+		debug(3,"Key: {} Value: {} \n".format(k, v))
 
 	ts = resp.get('ts')
 
@@ -110,6 +117,7 @@ if (connect_to_server()):
 	while(_connect):
 
 		if (_connect == 2):
+			debug(0, "++++++++++++ REBOOT OUT OF CHEESE +++++")
 			disconnect()
 			if (connect_to_server()):
 				_connect = 1
@@ -130,27 +138,33 @@ if (connect_to_server()):
 					ts = msg['ts']
 				user = msg.get('user')
 				if (re.match('!', msg.get('text'))):
-
-					print("Message from {}".format(user))
-					print(msg)
+					
+					comstring = msg.get('text').split()
+					comstring[0] = comstring[0][1:]
+					
+					debug(2,"Message from {}: {}".format(user, msg))
+					debug(2, "Parsed: {}".format( comstring))
+					
 					if (user in ops):
-						if (re.match("!", msg['text'])):
-							if (msg['text'] == '!die'):
-								print("{} says die!".format(user))
-								_connect = 0
-							elif (msg['text'] == '!hup'):
-								_connect = 2
-							elif (re.match( "!debug", msg['text']) ):
-								try:
-									lev = int(msg['text'].split()[1])
-									DEBUG_LEVEL = lev
-									chanpost("#bot_testing", "Setting debug level to {}".format(lev))
-								except:
-									chanpost("#bot_testing", "Cannot set level {}".format(lev))
+						if (comstring[0] == 'die'):
+							debug(0, "{} says die!".format(user))
+							_connect = 0
+						elif (comstring[0] == 'hup'):
+							_connect = 2
+						elif (comstring[0] == 'debug' ):
+							try:
+								lev = int(comstring[1])
+								DEBUG_LEVEL = lev
+								chanpost("#bot_testing", "Setting debug level to {}".format(lev))
+							except:
+								chanpost("#bot_testing", "Cannot set level {}".format(lev))
+						elif (PLUGINS.get(comstring[0])):
+							try:
+								response = PLUGINS[comstring[0]].command(comstring) 
 
-
-
-		
+								chanpost("#bot_testing", "Plugin response: {}".format(response.text))
+							except:
+								debug(0, "Could not perform plugin! ")
 
 
 			
