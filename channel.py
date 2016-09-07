@@ -4,7 +4,9 @@
 
 
 class ChannelManager():
-	channels = { "join": ("bot_testing"),
+	lookup = dict()
+	revlookup = dict()
+	channels = { "join": ("bot_testing", "general"),
 			"known": list(),
 			"watching": list()
 	}
@@ -14,3 +16,9 @@ class ChannelManager():
 	def getChannels(self):
 		return self.channels;
 	
+	def setLookup(self, cid, name):
+		self.lookup[cid] = name
+		self.revlookup[name] = cid
+
+	def getName(self, cid):
+		return self.lookup.get(cid)

@@ -1,4 +1,5 @@
 import time
+import sys
 from slackclient import SlackClient
 import re
 from channel import ChannelManager
@@ -23,14 +24,13 @@ debug(0, "+++++++++++++++++++++++++++++\n++STARTING\n")
 sc = SlackClient(mytoken)
 
 _connect = 1
-chan = ChannelManager()
-channels = chan.getChannels()
+chanman = ChannelManager()
+channels = chanman.getChannels()
 
 people = UserManager()
 owners = people.getOwners()
 
 plugin = PluginManager()
-plugins = plugin.getPlugins()
 
 debug(1,"Channels to join:")
 debug(1,channels['join'])
@@ -65,6 +65,9 @@ def ping_owners(message):
 		debug(1,sc.api_call("chat.postMessage", as_user="true:", channel=own['chat'], text=message))
 
 
+def reload_plugins():
+	plugin.initPlugins()
+	return 	plugin.getPlugins()
 
 
 debug(1,"Starting ... \n")
@@ -75,6 +78,7 @@ for own in owners.keys():
 
 if (connect_to_server()):
 
+	plugins = reload_plugins()
 
 	debug(1, "Checking API")
 	debug (1, sc.api_call("api.test"))
@@ -85,8 +89,9 @@ if (connect_to_server()):
 
 
 	chans = sc.api_call("channels.list")
-		
 	for chan in chans['channels']:
+		chanman.setLookup(chan['id'], chan['name'])		
+	
 		debug(3,"{} : {}".format(chan['name'], chan['id']))
 		channels['known'].append(chan['name'])
 
@@ -120,6 +125,8 @@ if (connect_to_server()):
 			debug(0, "++++++++++++ REBOOT OUT OF CHEESE +++++")
 			disconnect()
 			if (connect_to_server()):
+				plugins = reload_plugins()
+
 				_connect = 1
 			else:
 				connect = 0
@@ -128,6 +135,7 @@ if (connect_to_server()):
 		time.sleep(1)
 
 		for chan in channels['watching']:
+			cname = "#"+chanman.getName(chan)
 			resp = sc.api_call("channels.history",
 				channel=chan, oldest = ts 
 				)
@@ -144,8 +152,22 @@ if (connect_to_server()):
 					
 					debug(2,"Message from {}: {}".format(user, msg))
 					debug(2, "Parsed: {}".format( comstring))
-					
-					if (user in ops):
+
+					if (plugins.get(comstring[0])):
+							try:
+								debug(0, " ({})trying {}".format("#"+chan, comstring[0]))
+								response = plugins[comstring[0]].command(comstring) 
+								debug(0, response)
+
+								chanpost(cname, "{}".format(response.getText()))
+							except:
+								e = sys.exc_info()[0]
+								chanpost(cname, "the {} plugin has a problem! Blame Jai! {}".format(comstring[0], e))
+
+								debug(0, "Could not perform plugin! ")
+
+
+					elif (user in ops):
 						if (comstring[0] == 'die'):
 							debug(0, "{} says die!".format(user))
 							_connect = 0
@@ -158,14 +180,8 @@ if (connect_to_server()):
 								chanpost("#bot_testing", "Setting debug level to {}".format(lev))
 							except:
 								chanpost("#bot_testing", "Cannot set level {}".format(lev))
-						elif (PLUGINS.get(comstring[0])):
-							try:
-								response = PLUGINS[comstring[0]].command(comstring) 
-
-								chanpost("#bot_testing", "Plugin response: {}".format(response.text))
-							except:
-								debug(0, "Could not perform plugin! ")
-
+					else:
+						chanpost(cname, "I have no idea what you are asking me to do.")
 
 			
 

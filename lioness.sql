@@ -1,6 +1,13 @@
 CREATE DATABASE IF NOT EXISTS `lioness`;
 USE `lioness`;
 
+DROP TABLE `Reviews`;
+
+DROP TABLE `Users`;
+
+DROP TABLE `ObjectTypes`;
+DROP TABLE `Restaurants`;
+
 CREATE TABLE IF NOT EXISTS `Users`(
 	`userID` INT NOT NULL UNIQUE AUTO_INCREMENT,
 	`name` VARCHAR(255) NOT NULL,
@@ -31,9 +38,10 @@ CREATE TABLE IF NOT EXISTS `Reviews`(
 	`reviewID` INT NOT NULL UNIQUE AUTO_INCREMENT,
 	`reviewerID` INT NOT NULL,
 	`reviewType` INT NOT NULL,
+	`reviewedID` INT NOT NULL,
 	`review` TEXT,
 	`rating` SMALLINT,
-	PRIMARY KEY(`reviewID`,`reviewType`),
+	PRIMARY KEY(`reviewID`),
 	CONSTRAINT FOREIGN KEY(`reviewerID`) REFERENCES `Users`(`userID`),
 	CONSTRAINT FOREIGN KEY(`reviewType`) REFERENCES `ObjectTypes`(`typeID`)
 );
