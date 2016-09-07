@@ -1,12 +1,12 @@
 CREATE DATABASE IF NOT EXISTS `lioness`;
 USE `lioness`;
 
-DROP TABLE `Reviews`;
+DROP TABLE IF EXISTS `Reviews`;
 
-DROP TABLE `Users`;
+DROP TABLE IF EXISTS `Users`;
 
-DROP TABLE `ObjectTypes`;
-DROP TABLE `Restaurants`;
+DROP TABLE IF EXISTS `ObjectTypes`;
+DROP TABLE IF EXISTS `Restaurants`;
 
 CREATE TABLE IF NOT EXISTS `Users`(
 	`userID` INT NOT NULL UNIQUE AUTO_INCREMENT,

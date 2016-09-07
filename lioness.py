@@ -7,7 +7,7 @@ from users import UserManager
 from plugins.base import PluginManager
 
 
-DEBUG_LEVEL = 3
+DEBUG_LEVEL = -1
 
 def debug(level, message):
 	if (level < DEBUG_LEVEL):
