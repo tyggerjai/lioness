@@ -39,11 +39,12 @@ class PluginManager():
 			
 			if (pp != "plugins/base"):
 #				print("--Loading {}".format(pp))
-			
-				p = imp.find_module(pp)
+				try:
+					p = imp.find_module(pp)
 
-				pl = imp.load_module(pp, p[0], p[1], p[2])
-				
+					pl = imp.load_module(pp, p[0], p[1], p[2])
+				except:
+					pass		
 		
 	def registerPlugins(self):
 		

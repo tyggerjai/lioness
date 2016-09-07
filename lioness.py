@@ -155,7 +155,7 @@ if (connect_to_server()):
 
 					if (plugins.get(comstring[0])):
 							try:
-								debug(0, " ({})trying {}".format("#"+chan, comstring[0]))
+								debug(0, " ({})trying {}".format(cname, comstring[0]))
 								response = plugins[comstring[0]].command(comstring) 
 								debug(0, response)
 
