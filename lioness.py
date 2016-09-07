@@ -30,7 +30,9 @@ channels = chanman.getChannels()
 people = UserManager()
 owners = people.getOwners()
 
+
 plugin = PluginManager()
+plugins = plugin.getPlugins()
 
 debug(1,"Channels to join:")
 debug(1,channels['join'])
@@ -78,7 +80,6 @@ for own in owners.keys():
 
 if (connect_to_server()):
 
-	plugins = reload_plugins()
 
 	debug(1, "Checking API")
 	debug (1, sc.api_call("api.test"))
@@ -145,6 +146,7 @@ if (connect_to_server()):
 					debug(0, "Setting timestamp".format(ts))
 					ts = msg['ts']
 				user = msg.get('user')
+
 				if (re.match('!', msg.get('text'))):
 					
 					comstring = msg.get('text').split()
@@ -180,6 +182,8 @@ if (connect_to_server()):
 								chanpost("#bot_testing", "Setting debug level to {}".format(lev))
 							except:
 								chanpost("#bot_testing", "Cannot set level {}".format(lev))
+						else:
+							chanpost("#bot_testing","What you talkin about, Willis?")
 					else:
 						chanpost(cname, "I have no idea what you are asking me to do.")
 
