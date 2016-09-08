@@ -10,7 +10,7 @@ class PluginResponse(object):
 	def setText(self, text):
 		self._text = text
 	def getText(self):
-		return self._text
+		return str(self._text)
 
 class Plugin(object):
 	pass

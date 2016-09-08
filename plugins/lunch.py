@@ -36,7 +36,7 @@ class lunch(Plugin):
 	def __init__(self):
 		self.keyword = "lunch"
 
-	def command(self, text):
+	def command(self, dbconn, text):
 	
 		response = PluginResponse()
 		response.setText("The usual place")

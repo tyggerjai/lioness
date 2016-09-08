@@ -2,12 +2,24 @@ import time
 import sys
 from slackclient import SlackClient
 import re
+from database import DataBase
 from channel import ChannelManager
 from users import UserManager
 from plugins.base import PluginManager
+import yaml
 
+DEBUG_LEVEL = 1
 
-DEBUG_LEVEL = -1
+def load_configs():
+	try:
+		with  open("conf.yaml", "r") as conf_file:
+			conf = yaml.load(conf_file)
+	except :
+		e = sys.exc_info()[0]
+
+		print("Could not load: {}".format(e))
+		conf = dict()
+	return conf
 
 def debug(level, message):
 	if (level < DEBUG_LEVEL):
@@ -24,6 +36,13 @@ debug(0, "+++++++++++++++++++++++++++++\n++STARTING\n")
 sc = SlackClient(mytoken)
 
 _connect = 1
+config = load_configs()
+debug(0,config)
+dbconn = DataBase(config['dbname'], config['username'], config['passwd'])
+
+debug(0, "DBConn {}".format(dbconn))
+tables = dbconn.showtables()
+debug(0, tables)
 chanman = ChannelManager()
 channels = chanman.getChannels()
 
@@ -158,7 +177,7 @@ if (connect_to_server()):
 					if (plugins.get(comstring[0])):
 							try:
 								debug(0, " ({})trying {}".format(cname, comstring[0]))
-								response = plugins[comstring[0]].command(comstring) 
+								response = plugins[comstring[0]].command(dbconn, comstring) 
 								debug(0, response)
 
 								chanpost(cname, "{}".format(response.getText()))
