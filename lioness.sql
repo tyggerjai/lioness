@@ -46,3 +46,22 @@ CREATE TABLE IF NOT EXISTS `Reviews`(
 	CONSTRAINT FOREIGN KEY(`reviewType`) REFERENCES `ObjectTypes`(`typeID`)
 );
 
+INSERT INTO `Users`(`name`, `title`) VALUES('jai', 'botmaster');
+INSERT INTO `Restaurants`(`name`) VALUES('Safeway');
+INSERT INTO `Restaurants`(`name`) VALUES('Lucy\'s Dumplings');
+INSERT INTO `Restaurants`(`name`) VALUES('The Korean Place');
+INSERT INTO `Restaurants`(`name`) VALUES('Spud bar');
+INSERT INTO `Restaurants`(`name`) VALUES('Shuji Sushi');
+INSERT INTO `Restaurants`(`name`) VALUES('Kebabji');
+INSERT INTO `Restaurants`(`name`) VALUES('Rolls');
+INSERT INTO `Restaurants`(`name`) VALUES('Bay City Burrito');
+INSERT INTO `Restaurants`(`name`) VALUES('Samurai');
+INSERT INTO `Restaurants`(`name`) VALUES('Schnitz');
+INSERT INTO `Restaurants`(`name`) VALUES('Le Resistance');
+INSERT INTO `Restaurants`(`name`) VALUES('Subway');
+INSERT INTO `Restaurants`(`name`) VALUES('Beer Deluxe');
+INSERT INTO `Restaurants`(`name`) VALUES('The Hawthorn');
+INSERT INTO `Restaurants`(`name`) VALUES('The Nevermind');
+INSERT INTO `Restaurants`(`name`) VALUES('Santorini');
+INSERT INTO `Restaurants`(`name`) VALUES('Zen');
+INSERT INTO `Restaurants`(`name`) VALUES('Haddons');

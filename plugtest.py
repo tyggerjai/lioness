@@ -23,7 +23,7 @@ print(dbconn.showtables())
 p = PluginManager()
 	
 TEXTRAS = {'lunch': ("list",),
-			'known': ("fish", "users")}
+			'known': ("fish", "users", "restaurants")}
 
 COMMANDS = p.getPlugins()
 
@@ -36,9 +36,10 @@ for c,k in COMMANDS.items():
 	print(response.getText())
 	
 	if (len(TEXTRAS.get(c, ())) > 0):
-		args = list()
-		args.append(c)
+		
 		for i in TEXTRAS.get(c):
+			args = list()
+			args.append(c)
 			args.extend( i.split())
 
 			print("\n-\n")
