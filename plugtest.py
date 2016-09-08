@@ -1,5 +1,6 @@
 from database import DataBase
 import yaml
+import sys
 
 from plugins.base import PluginManager
 
@@ -20,9 +21,9 @@ print(config)
 dbconn = DataBase(config['dbname'], config['username'], config['passwd'])
 print(dbconn.showtables())
 
-p = PluginManager()
+p = PluginManager(dbconn)
 	
-TEXTRAS = {'lunch': ("list",),
+TEXTRAS = {'lunch': ("list", "add blowme"),
 			'known': ("fish", "users", "restaurants")}
 
 COMMANDS = p.getPlugins()
@@ -32,7 +33,7 @@ for c,k in COMMANDS.items():
 	args = list()
 	args.append(c)
 	
-	response = k.command(dbconn, args)
+	response = k.command(args)
 	print(response.getText())
 	
 	if (len(TEXTRAS.get(c, ())) > 0):
@@ -45,7 +46,7 @@ for c,k in COMMANDS.items():
 			print("\n-\n")
 			print(args)
 
-			response = k.command(dbconn, args )
+			response = k.command( args )
 			print(response.getText())
 			
 	

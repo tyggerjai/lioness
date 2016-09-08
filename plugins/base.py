@@ -1,6 +1,6 @@
 from pathlib import Path
 import imp
-
+import sys
 
 
 class PluginResponse(object):
@@ -17,9 +17,13 @@ class Plugin(object):
 
 class PluginManager():
 	COMMANDS = dict()
+	dbconn = ''
 
-	def __init__(self):
+	def __init__(self, dbconn):
+		self.dbconn = dbconn
 		self.initPlugins()
+		#print(dbconn)
+		
 
 	def initPlugins(self):
 		COMMANDS={}
@@ -44,14 +48,18 @@ class PluginManager():
 
 					pl = imp.load_module(pp, p[0], p[1], p[2])
 				except:
-					pass		
+					e = sys.exc_info()[0]
+
+					print("----  Could not load: {}".format(e))		
 		
 	def registerPlugins(self):
 		
 		for plugin in Plugin.__subclasses__():
-			
-			obj= plugin()
+			print(plugin)
+				
+			obj= plugin(self.dbconn)
 			print("--Registering {}".format(obj.keyword))
+		
 			self.COMMANDS[obj.keyword] = obj
 
 	def getPlugins(self):

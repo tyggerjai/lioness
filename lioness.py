@@ -43,6 +43,7 @@ dbconn = DataBase(config['dbname'], config['username'], config['passwd'])
 debug(0, "DBConn {}".format(dbconn))
 tables = dbconn.showtables()
 debug(0, tables)
+
 chanman = ChannelManager()
 channels = chanman.getChannels()
 
@@ -50,7 +51,7 @@ people = UserManager()
 owners = people.getOwners()
 
 
-plugin = PluginManager()
+plugin = PluginManager(dbconn)
 plugins = plugin.getPlugins()
 
 debug(1,"Channels to join:")
@@ -86,11 +87,33 @@ def ping_owners(message):
 		debug(1,sc.api_call("chat.postMessage", as_user="true:", channel=own['chat'], text=message))
 
 
+def add_chans(chans):
+	for chan in chans['channels']:
+		chanman.setLookup(chan['id'], chan['name'])		
+	
+		debug(3,"{} : {}".format(chan['name'], chan['id']))
+		channels['known'].append(chan['name'])
+
+		if (chan['name'] in channels['join']):
+
+			debug(2, "Found watching channel {}".format(chan['name']))
+			channels['watching'].append(chan['id'])
+
+	for chan in channels['watching']:
+		debug(3,"Watching {}".format(chan))			
+
+
+def get_timestamp(msg):
+	if (float(msg['ts']) > float(ts)):
+		debug(0, "Setting timestamp".format(ts))
+		return msg['ts']
+
 def reload_plugins():
 	plugin.initPlugins()
 	return 	plugin.getPlugins()
 
 
+# Start and connect
 debug(1,"Starting ... \n")
 debug(1,"My owners are: ")
 
@@ -109,20 +132,7 @@ if (connect_to_server()):
 
 
 	chans = sc.api_call("channels.list")
-	for chan in chans['channels']:
-		chanman.setLookup(chan['id'], chan['name'])		
-	
-		debug(3,"{} : {}".format(chan['name'], chan['id']))
-		channels['known'].append(chan['name'])
-
-		if (chan['name'] in channels['join']):
-
-			debug(2, "Found watching channel {}".format(chan['name']))
-			channels['watching'].append(chan['id'])
-
-	for chan in channels['watching']:
-		debug(3,"Watching {}".format(chan))		
-
+	add_chans(chans)
 		
 	resp = sc.api_call(
     	"chat.postMessage", channel="#bot_testing", text="boop",
@@ -140,7 +150,7 @@ if (connect_to_server()):
 	
 
 	while(_connect):
-
+		# HUP received, reload the plugins, disconnect from the server and reconnect
 		if (_connect == 2):
 			debug(0, "++++++++++++ REBOOT OUT OF CHEESE +++++")
 			disconnect()
@@ -149,10 +159,10 @@ if (connect_to_server()):
 
 				_connect = 1
 			else:
-				connect = 0
+				_connect = 0
 		
 
-		time.sleep(1)
+		time.sleep(0.5)
 
 		for chan in channels['watching']:
 			cname = "#"+chanman.getName(chan)
@@ -161,23 +171,21 @@ if (connect_to_server()):
 				)
 			
 			for msg in resp['messages']:
-				if (float(msg['ts']) > float(ts)):
-					debug(0, "Setting timestamp".format(ts))
-					ts = msg['ts']
+				ts = get_timestamp(msg)
 				user = msg.get('user')
 
 				if (re.match('!', msg.get('text'))):
 					
 					comstring = msg.get('text').split()
 					comstring[0] = comstring[0][1:]
-					
+					cmd = comstring[0]
 					debug(2,"Message from {}: {}".format(user, msg))
 					debug(2, "Parsed: {}".format( comstring))
 
-					if (plugins.get(comstring[0])):
+					if (plugins.get(cmd)):
 							try:
-								debug(0, " ({})trying {}".format(cname, comstring[0]))
-								response = plugins[comstring[0]].command(dbconn, comstring) 
+								debug(0, " ({})trying {}".format(cname, cmd))
+								response = plugins[cmd].command(comstring) 
 								debug(0, response)
 
 								chanpost(cname, "{}".format(response.getText()))
@@ -189,12 +197,12 @@ if (connect_to_server()):
 
 
 					elif (user in ops):
-						if (comstring[0] == 'die'):
+						if (cmd == 'die'):
 							debug(0, "{} says die!".format(user))
 							_connect = 0
-						elif (comstring[0] == 'hup'):
+						elif (cmd == 'hup'):
 							_connect = 2
-						elif (comstring[0] == 'debug' ):
+						elif (cmd == 'debug' ):
 							try:
 								lev = int(comstring[1])
 								DEBUG_LEVEL = lev

@@ -3,10 +3,10 @@ import sys
 
 
 class jibo(Plugin):
-	def __init__(self):
+	def __init__(self, dbconn):
 		self.keyword = "jibo"
 		
-	def command(self, dbconn,text):
+	def command(self, text):
 		response = PluginResponse()
 		response.setText("Why don't you go fuck yourself")
 		return response

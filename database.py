@@ -10,10 +10,26 @@ class DataBase():
 		self.conn = MySQLdb.connect(user=username, passwd=mypass, db=dbname )
 
 	def showtables(self):
-		return self.query("""SHOW TABLES;""")
+		return self.query("""SHOW TABLES;""", ())
 		
 
-	def query(self, query):
-		self.conn.query(query)
-		result = self.conn.use_result()
-		return result.fetch_row(0)
+	def query(self, query, holders):
+		#print("qing {}".format(query))
+
+		if (len(holders) == 0):
+			self.conn.query(query)
+			result = self.conn.use_result()
+			r = result.fetch_row(0)
+			#print(r)
+			return r
+		else:
+			print("++++++++++++\n")
+			print(query)
+			print(holders)
+			print("++++++++++++\n")
+			
+			c = self.conn.cursor()
+			c.execute(query, holders)
+			r =  c.fetchall()
+			self.conn.commit()
+			return r

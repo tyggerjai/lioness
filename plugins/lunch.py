@@ -32,28 +32,26 @@ class lunch(Plugin):
 		'The roll place in the plaza', 
 		'Zen'
 		)
+	dbconn = ''
 
-	def __init__(self):
+	def __init__(self, dbconn):
 		self.keyword = "lunch"
+		self.dbconn = dbconn
 
-	def command(self, dbconn, text):
-	
+	def command(self,  text):
 		response = PluginResponse()
 		response.setText("The usual place")
 		
 
 		try:
-			if(self.keyword == text[0]):
-				if (len(text) == 2):
-					if (text[1] == 'list'):
-						resp = ''
-						for s in ["{}\n".format(x) for x in self.lunches]:
-							resp += s
-						response.setText( resp)
-				else:
-					response.setText(self.chooseLunch())   
+		
+			if (len(text) >1):
+				
+				resp = self.parse_command(text)
+				response.setText(resp)
+				
 			else:
-				response.setText("I have no idea what that is")
+				response.setText(self.chooseLunch())   
 		except: 
 
 			e = sys.exc_info()[0]
@@ -64,3 +62,32 @@ class lunch(Plugin):
 		prefix =  self.prefixes[randint(0, len(self.prefixes) -1)]  
 		lunch = self.lunches[randint(0,len(self.lunches) -1)]
 		return prefix + lunch
+
+	def parse_command(self,text):
+		resp = ''
+			
+		if (text[1] == 'list'):
+		#	print("listing")
+			resp = self.list_lunches()
+
+		elif (text[1] == 'add'):	
+			try:
+				rname = " ".join(text[2:])
+				#rname += ["{} ".format(str(x)) for x in text[2:]]
+				
+				print("adding  again {}".format(rname))
+				self.dbconn.query("""INSERT INTO `restaurants`(`name`) VALUES (%s)""",
+				 (rname,))
+			except:
+				e = sys.exc_info()[0]
+				print("DBI {}".format(e))
+
+		return resp
+
+	def list_lunches(self):
+		#print("still listing")
+		
+		resp = ''
+		for s in self.dbconn.query("SELECT name FROM restaurants", ()):
+			resp += s[0] + "\n"
+		return resp
