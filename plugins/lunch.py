@@ -55,7 +55,7 @@ class lunch(Plugin):
 		except: 
 
 			e = sys.exc_info()[0]
-			print("NFI {}".format(e))
+			return "NFI {}".format(e)
 		return response
 
 	def chooseLunch(self):
@@ -75,12 +75,12 @@ class lunch(Plugin):
 				rname = " ".join(text[2:])
 				#rname += ["{} ".format(str(x)) for x in text[2:]]
 				
-				print("adding  again {}".format(rname))
+				#print("adding  again {}".format(rname))
 				self.dbconn.query("""INSERT INTO `restaurants`(`name`) VALUES (%s)""",
 				 (rname,))
 			except:
 				e = sys.exc_info()[0]
-				print("DBI {}".format(e))
+				return "DBI {}".format(e)
 
 		return resp
 
