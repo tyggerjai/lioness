@@ -9,7 +9,7 @@ class DataBase():
 	def __init__(self, dbname, username, mypass):
 		self.conn = MySQLdb.connect(user=username, passwd=mypass, db=dbname )
 
-	def showtables(self):
+	def show_tables(self):
 		return self.query("""SHOW TABLES;""", ())
 		
 

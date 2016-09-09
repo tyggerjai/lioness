@@ -41,18 +41,18 @@ debug(0,config)
 dbconn = DataBase(config['dbname'], config['username'], config['passwd'])
 
 debug(0, "DBConn {}".format(dbconn))
-tables = dbconn.showtables()
+tables = dbconn.show_tables()
 debug(0, tables)
 
 chanman = ChannelManager()
-channels = chanman.getChannels()
+channels = chanman.get_channels()
 
 people = UserManager()
-owners = people.getOwners()
+owners = people.get_owners()
 
 
 plugin = PluginManager(dbconn)
-plugins = plugin.getPlugins()
+plugins = plugin.get_plugins()
 
 debug(1,"Channels to join:")
 debug(1,channels['join'])
@@ -89,7 +89,7 @@ def ping_owners(message):
 
 def add_chans(chans):
 	for chan in chans['channels']:
-		chanman.setLookup(chan['id'], chan['name'])		
+		chanman.set_lookup(chan['id'], chan['name'])		
 	
 		debug(3,"{} : {}".format(chan['name'], chan['id']))
 		channels['known'].append(chan['name'])
@@ -109,8 +109,8 @@ def get_timestamp(msg):
 		return msg['ts']
 
 def reload_plugins():
-	plugin.initPlugins()
-	return 	plugin.getPlugins()
+	plugin.init_plugins()
+	return 	plugin.get_plugins()
 
 
 # Start and connect
@@ -165,7 +165,7 @@ if (connect_to_server()):
 		time.sleep(0.5)
 
 		for chan in channels['watching']:
-			cname = "#"+chanman.getName(chan)
+			cname = "#"+chanman.get_name(chan)
 			resp = sc.api_call("channels.history",
 				channel=chan, oldest = ts 
 				)
