@@ -76,7 +76,7 @@ class lunch(Plugin):
 				rname = " ".join(text[2:])
 				#rname += ["{} ".format(str(x)) for x in text[2:]]
 				
-				print("adding  again {}".format(rname))
+				#print("adding  again {}".format(rname))
 				self.dbconn.query("""INSERT INTO `restaurants`(`name`) VALUES (%s)""",
 				 (rname,))
 			except:
