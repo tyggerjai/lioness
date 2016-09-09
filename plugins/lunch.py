@@ -55,7 +55,7 @@ class lunch(Plugin):
 		except: 
 
 			e = sys.exc_info()[0]
-			print("NFI {}".format(e))
+			return "NFI {}".format(e)
 		return response
 
 	def choose_lunch(self):
@@ -81,7 +81,7 @@ class lunch(Plugin):
 				 (rname,))
 			except:
 				e = sys.exc_info()[0]
-				print("DBI {}".format(e))
+				return "DBI {}".format(e)
 
 		return resp
 
