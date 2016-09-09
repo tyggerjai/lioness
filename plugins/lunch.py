@@ -51,15 +51,16 @@ class lunch(Plugin):
 				response.setText(resp)
 				
 			else:
-				response.setText(self.chooseLunch())   
+				response.setText(self.choose_lunch())   
 		except: 
 
 			e = sys.exc_info()[0]
 			return "NFI {}".format(e)
 		return response
 
-	def chooseLunch(self):
+	def choose_lunch(self):
 		prefix =  self.prefixes[randint(0, len(self.prefixes) -1)]  
+		lunches = self.get_lunches()
 		lunch = self.lunches[randint(0,len(self.lunches) -1)]
 		return prefix + lunch
 
@@ -87,7 +88,12 @@ class lunch(Plugin):
 	def list_lunches(self):
 		#print("still listing")
 		
-		resp = ''
+		return "\n".join(self.get_lunches())
+
+	def get_lunches(self):
+		print("getting")
+		lunches = list()
 		for s in self.dbconn.query("SELECT name FROM restaurants", ()):
-			resp += s[0] + "\n"
-		return resp
+			#print(s[0])
+			lunches.append(s[0])
+		return lunches

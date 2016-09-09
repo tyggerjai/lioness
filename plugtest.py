@@ -19,14 +19,15 @@ config = load_configs()
 
 print(config)
 dbconn = DataBase(config['dbname'], config['username'], config['passwd'])
-print(dbconn.showtables())
+print(dbconn.show_tables())
 
 p = PluginManager(dbconn)
 	
 TEXTRAS = {'lunch': ("list", "add blowme"),
-			'known': ("fish", "users", "restaurants")}
+			'known': ("fish", "users", "restaurants"),
+			'jargon': ("foo","meme")}
 
-COMMANDS = p.getPlugins()
+COMMANDS = p.get_plugins()
 
 for c,k in COMMANDS.items():
 	print ("------TESTING {}".format(c))

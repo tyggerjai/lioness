@@ -13,12 +13,12 @@ class ChannelManager():
 	def __init__(self):
 		pass
 
-	def getChannels(self):
+	def get_channels(self):
 		return self.channels;
 	
-	def setLookup(self, cid, name):
+	def set_lookup(self, cid, name):
 		self.lookup[cid] = name
 		self.revlookup[name] = cid
 
-	def getName(self, cid):
+	def get_name(self, cid):
 		return self.lookup.get(cid)

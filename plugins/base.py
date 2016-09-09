@@ -21,18 +21,18 @@ class PluginManager():
 
 	def __init__(self, dbconn):
 		self.dbconn = dbconn
-		self.initPlugins()
+		self.init_plugins()
 		#print(dbconn)
 		
 
-	def initPlugins(self):
+	def init_plugins(self):
 		COMMANDS={}
-		self.findPlugins()
-		self.registerPlugins();
+		self.find_plugins()
+		self.register_plugins();
 
 		
 
-	def findPlugins(self):
+	def find_plugins(self):
 		plugpath = Path("plugins")
 		plugins = [list(plugpath.glob('*.py'))]
 #		print(plugins)
@@ -52,7 +52,7 @@ class PluginManager():
 
 					print("----  Could not load: {}".format(e))		
 		
-	def registerPlugins(self):
+	def register_plugins(self):
 		
 		for plugin in Plugin.__subclasses__():
 			print(plugin)
@@ -62,5 +62,5 @@ class PluginManager():
 		
 			self.COMMANDS[obj.keyword] = obj
 
-	def getPlugins(self):
+	def get_plugins(self):
 		return self.COMMANDS
