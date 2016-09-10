@@ -23,10 +23,10 @@ class DataBase():
 			#print(r)
 			return r
 		else:
-			print("++++++++++++\n")
-			print(query)
-			print(holders)
-			print("++++++++++++\n")
+			#print("++++++++++++\n")
+			#print(query)
+			#print(holders)
+			#print("++++++++++++\n")
 			
 			c = self.conn.cursor()
 			c.execute(query, holders)

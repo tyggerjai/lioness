@@ -13,12 +13,12 @@ class known(Plugin):
 	def __init__(self, dbconn):
 		self.dbconn = dbconn
 		querytext = "SHOW TABLES"
-		print("QUERY: {}".format(querytext))
+		#print("QUERY: {}".format(querytext))
 		qres = self.dbconn.query(querytext, ())
 		if qres is not None:
 
 			self.tables.extend([str(x[0]).lower() for x in qres])
-			print("----- {}".format(self.tables))
+			#print("----- {}".format(self.tables))
 		
 
 	def command(self, text):
@@ -36,7 +36,7 @@ class known(Plugin):
 			return self.response
 
 		querytext = "SELECT {} FROM {}"
-		print("QUERY: {}".format(querytext))
+		#print("QUERY: {}".format(querytext))
 		qres = self.dbconn.query(querytext.format(tbl[0], tbl[1]), ())
 		if qres is not None:
 			respstr = "I know {} {}!\n".format(len(qres), tbl[1])

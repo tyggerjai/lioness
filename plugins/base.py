@@ -33,7 +33,8 @@ class PluginManager():
 		
 
 	def find_plugins(self):
-		plugpath = Path("plugins")
+		PREFIX = "/home/solitaire/lioness/plugins/"
+		plugpath = Path(PREFIX)
 		plugins = [list(plugpath.glob('*.py'))]
 #		print(plugins)
 		for pg in plugins[0]:
@@ -41,7 +42,7 @@ class PluginManager():
 			pp = pp[:-3]
 			#print("LOOKING FOR {}".format(pp))
 			
-			if (pp != "plugins/base"):
+			if (pp != PREFIX+"base"):
 #				print("--Loading {}".format(pp))
 				try:
 					p = imp.find_module(pp)
@@ -50,15 +51,15 @@ class PluginManager():
 				except:
 					e = sys.exc_info()[0]
 
-					print("----  Could not load: {}".format(e))		
+					#print("----  Could not load: {}".format(e))		
 		
 	def register_plugins(self):
 		
 		for plugin in Plugin.__subclasses__():
-			print(plugin)
+			#print(plugin)
 				
 			obj= plugin(self.dbconn)
-			print("--Registering {}".format(obj.keyword))
+			#print("--Registering {}".format(obj.keyword))
 		
 			self.COMMANDS[obj.keyword] = obj
 

@@ -91,7 +91,7 @@ class lunch(Plugin):
 		return "\n".join(self.get_lunches())
 
 	def get_lunches(self):
-		print("getting")
+		#print("getting")
 		lunches = list()
 		for s in self.dbconn.query("SELECT name FROM restaurants", ()):
 			#print(s[0])

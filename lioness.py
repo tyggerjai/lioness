@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import time
 import sys
 from slackclient import SlackClient
@@ -8,11 +10,12 @@ from users import UserManager
 from plugins.base import PluginManager
 import yaml
 
-DEBUG_LEVEL = 1
+PREFIX = "/home/solitaire/lioness/"
+DEBUG_LEVEL = -1
 
 def load_configs():
 	try:
-		with  open("conf.yaml", "r") as conf_file:
+		with  open(PREFIX+"conf.yaml", "r") as conf_file:
 			conf = yaml.load(conf_file)
 	except :
 		e = sys.exc_info()[0]
@@ -26,7 +29,7 @@ def debug(level, message):
 		print(message)
 
 mytoken = ""
-with open("API.key") as api:
+with open(PREFIX+"API.key") as api:
 	mytoken = api.readline().strip()
 	api.close()
 
