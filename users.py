@@ -9,8 +9,6 @@ class UserManager():
 			}
 
 		}
-	def __init__(self):
-		pass
-
+	
 	def get_owners(self):
 		return self.OWNERS

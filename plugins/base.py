@@ -1,4 +1,5 @@
 from pathlib import Path
+
 import imp
 import sys
 
@@ -27,12 +28,13 @@ class PluginManager():
 
 	def init_plugins(self):
 		COMMANDS={}
-		self.find_plugins()
+		self.find_plugins(0)
 		self.register_plugins();
 
 		
 
-	def find_plugins(self):
+	def find_plugins(self, tests):
+
 		plugpath = Path("plugins")
 		plugins = [list(plugpath.glob('*.py'))]
 #		print(plugins)
@@ -42,15 +44,15 @@ class PluginManager():
 			#print("LOOKING FOR {}".format(pp))
 			
 			if (pp != "plugins/base"):
-#				print("--Loading {}".format(pp))
+				#print("--Loading {}".format(pp))
 				try:
 					p = imp.find_module(pp)
-
+						
 					pl = imp.load_module(pp, p[0], p[1], p[2])
 				except:
 					e = sys.exc_info()[0]
 
-					print("----  Could not load: {}".format(e))		
+					print("----  Could not load {} : {}".format( p[0], e))		
 		
 	def register_plugins(self):
 		
@@ -61,6 +63,9 @@ class PluginManager():
 			print("--Registering {}".format(obj.keyword))
 		
 			self.COMMANDS[obj.keyword] = obj
-
+		
 	def get_plugins(self):
 		return self.COMMANDS
+
+	def get_tests(self):
+		self.find_plugins(1)
