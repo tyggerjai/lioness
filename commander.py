@@ -1,74 +1,86 @@
 ####################
 # Command handler for Lioness bot. This is where the heavy lifting happens.
 ###
-from plugins.base import PluginManager
+from plugins.base import PluginManager, PluginResponse
 import re
+import sys
 
 class CommandArgs():
 	def __init__(self):
 		self.user = ''
 		self.command = ''
-		self.string = ''
+		self.text = ''
+		self.chan = ''
 
-class CommandResponse():
-	
-	def __init__(self, chan):
-		self.channel = chan
 
 class Commander():
 
-	def __init__(self, dbconn, log):
+	def __init__(self, dbconn, log, prefix):
 		self.dbconn = dbconn;
 		self.log = log
 		
-		plugin = PluginManager(dbconn)
+		plugin = PluginManager(dbconn, log, prefix)
+
 		self.commands = plugin.get_plugins()
+		self.log.log(2, "COMMANDS: {}".format(self.commands))
 
 	def handle(self, args):
-		response = CommandResponse()
+		self.log.log(0, "CHANNEL: " + args.chan)
+		response = PluginResponse()
+		self.log.log(2,"Message from :{}:{}:{}".format(args.user, args.command, args.text))
+	
+		#if (args.text is not None):
+		#	opts, content = self.parse_opts(args.text)
+
+
+		#XXX All commands should appear here, and load the builtins first. 
+		#Commands should have keywords and "level". 
+		#Users should also have "rank"
+		self.log.log(2, "Looking for {}".format(args.command))
 		
-		self.log.debug(2,"Message from {}: {}".format(user, msg))
-		self.log.debug(2, "Parsed: {}".format( comstring))
+		if (self.commands.get(args.command)):
+			cmd = self.commands[args.command]
 
-
-		opts, content = parse_opts(args.text)
-
-		if (self.plugins.get(args.command)):
-			try:
-				self.log.debug(0, " ({})trying {}".format(cname, cmd))
-				response = plugins[cmd].command(comstring) 
-				self.log.debug(0, response)
-
-				chanpost(cname, "{}".format(response.getText()))
-			except:
-				e = sys.exc_info()[0]
-
-				
-				self.log.debug(0, "Could not perform plugin! ")
-
-
-		elif (user in ops):
-			if (cmd == 'die'):
-				self.log.debug(0, "{} says die!".format(user))
-				_connect = 0
-			elif (cmd == 'hup'):
-				_connect = 2
-			elif (cmd == 'self.log.debug' ):
+			if (1 > 0):
 				try:
-					lev = int(comstring[1])
-					DEBUG_LEVEL = lev
-					chanpost("#bot_testing", "Setting self.log.debug level to {}".format(lev))
+					self.log.log(0, " ({})trying {} with {} ".format(args.chan, args.command, args.text))
+					response = cmd.command(args.text) 
+					self.log.log(0, response.getText())
 				except:
-					chanpost("#bot_testing", "Cannot set level {}".format(lev))
-			else:
-				chanpost("#bot_testing","What you talkin about, Willis?")
+					e = sys.exc_info()[0]
+					self.log.log(0, "Could not perform plugin! {}".format(e))
+					response.setText("Error with plugin. Blame {}".format("jai"))
+#
+#		elif (args.user ):
+#			if (args.command == 'die'):
+#				self.log.log(0, "{} says die!".format(args.user))
+#				_connect = 0
+#			elif (args.command == 'hup'):
+#				_connect = 2
+#			elif (args.command == 'debug' ):
+#				try:
+#					lev = int(args.text[0])
+#					self.log.DEBUG_LEVEL = lev
+#					response.setText ("Setting log level to {}".format(lev))
+#				except:
+#					response.setText("Cannot set level {}".format(lev))
+#			else:
+#				response.setText("#bot_testing","What you talkin about, Willis?")
 		else:
-			chanpost(cname, "I have no idea what you are asking me to do.")
+			response.setText("I have no idea what you are asking me to do.")
+
+		response.setChan(args.chan)
+		return response
 
 	def parse_opts(self, text):
+		self.log.log(2, "Trying to parse")
 		opts = dict()
 		content = ''
 		key = ''
+
+		if (len(text) == 0):
+			return (opts, content)
+
 		for token in text.split():
 			if re.match("-", token):
 				key = token
@@ -76,10 +88,10 @@ class Commander():
 					key = key[1:]
 
 			else:
-				if key != ''
+				if (key != ''):
 					opts[key] = token
 					key = ''
 				else:
 					content += str(token) + " "
 
-
+		return(opts, content)

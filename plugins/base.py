@@ -6,12 +6,15 @@ import sys
 
 class PluginResponse(object):
 	_text = ''
-	def __init__(self):
-		pass
+	_chan = ''
+	def setChan(self, chan):
+		self._chan = chan	
 	def setText(self, text):
 		self._text = text
 	def getText(self):
 		return str(self._text)
+	def getChan(self):
+		return str(self._chan)
 
 class Plugin(object):
 	pass
@@ -20,22 +23,24 @@ class PluginManager():
 	COMMANDS = dict()
 	dbconn = ''
 
-	def __init__(self, dbconn):
+	def __init__(self, dbconn, log, prefix):
 		self.dbconn = dbconn
+		self.log = log
+		self.prefix = prefix + "plugins"
 		self.init_plugins()
 		#print(dbconn)
 		
 
 	def init_plugins(self):
 		COMMANDS={}
-		self.find_plugins(0)
+		self.find_plugins()
 		self.register_plugins();
 
 		
 
 	def find_plugins(self):
-		PREFIX = "/home/solitaire/lioness/plugins/"
-		plugpath = Path(PREFIX)
+		
+		plugpath = Path(self.prefix)
 		plugins = [list(plugpath.glob('*.py'))]
 #		print(plugins)
 		for pg in plugins[0]:
@@ -43,7 +48,7 @@ class PluginManager():
 			pp = pp[:-3]
 			#print("LOOKING FOR {}".format(pp))
 			
-			if (pp != PREFIX+"base"):
+			if (pp != self.prefix+"base"):
 #				print("--Loading {}".format(pp))
 				try:
 					p = imp.find_module(pp)
@@ -66,6 +71,3 @@ class PluginManager():
 		
 	def get_plugins(self):
 		return self.COMMANDS
-
-	def get_tests(self):
-		self.find_plugins(1)

@@ -18,14 +18,14 @@ class lunch(Plugin):
 		self.keyword = "lunch"
 		self.dbconn = dbconn
 
-	def command(self,  text):
+	def command(self, text):
 		response = PluginResponse()
 		response.setText("The usual place")
 		
 
 		try:
 		
-			if (len(text) >1):
+			if (text != ' '):
 				
 				resp = self.parse_command(text)
 				response.setText(resp)
@@ -35,7 +35,7 @@ class lunch(Plugin):
 		except: 
 
 			e = sys.exc_info()[0]
-			return "NFI {}".format(e)
+			response.setText( "NFI {}".format(e))
 		return response
 
 	def choose_lunch(self, naked = 0):

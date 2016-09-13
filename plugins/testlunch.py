@@ -19,6 +19,10 @@ class testlunch(unittest.TestCase):
 		ch = self.l.choose_lunch()
 		self.assertFalse(ch in choice)
 
+	def test_command(self):
+		choice = self.l.get_lunches()
+		ch = self.l.command(' ')
+		self.assertTrue(ch in choice)
 
 	def test_add(self):
 		name = "Testaurant"
