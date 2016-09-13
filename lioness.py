@@ -11,6 +11,8 @@ from commander import Commander, CommandArgs
 import yaml
 import logger
 
+PREFIX = "/home/solitaire/lioness/"
+
 def load_configs(cfile):
 	try:
 		with  open(cfile, "r") as conf_file:
@@ -181,7 +183,6 @@ class Lioness():
 
 
 if __name__ == '__main__':
-	PREFIX = "./"
 	
 	try:
 		conf = load_configs(PREFIX +"conf.yaml")
@@ -189,7 +190,7 @@ if __name__ == '__main__':
 		e = sys.exc_info()[0]
 		print("Can't load config - have you broken it? {}".format(e))
 	
-	log = logger.Logger(conf['debug_lvl'], conf['logfile'])
+	log = logger.Logger(conf['debug_lvl'], conf['prefix'] + conf['logfile'])
 	
 
 	log.log(2,"CONFIGS: {}".format(conf))	
