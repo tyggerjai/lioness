@@ -14,6 +14,7 @@ import logger
 PREFIX = "/home/solitaire/lioness/"
 
 def load_configs(cfile):
+	"""Load the config from the given absolute path file name"""
 	try:
 		with  open(cfile, "r") as conf_file:
 			conf = yaml.load(conf_file)
@@ -27,7 +28,13 @@ def load_configs(cfile):
 
 
 class Lioness():
+	""" Lioness is the main class for loading the configs and handling connections
+
+		__init__(self, config, log) takes a dictionary of configs and a logger object
+
+		"""
 	def __init__(self, config, log):
+		"""Takes config dict and logger object to initialise """
 		self.log = log
 		self.status = "ok"
 		try:

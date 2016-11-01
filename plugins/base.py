@@ -46,7 +46,7 @@ class PluginManager():
 		for pg in plugins[0]:
 			pp = str(pg)
 			pp = pp[:-3]
-			#print("LOOKING FOR {}".format(pp))
+			self.log.log(0,"LOOKING FOR {}".format(pp))
 			
 			if (pp != self.prefix+"base"):
 #				print("--Loading {}".format(pp))
