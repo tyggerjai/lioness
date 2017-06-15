@@ -11,7 +11,8 @@ class fetchurl(Plugin):
 		self.keyword = "fetchurl"
 		self.response = PluginResponse()
 
-	def command(self, text):
+	def command(self, args):
+                text = args.text
 		self.response.setText("Nope")
 		url = text[0]
 		resp = requests.get(url)

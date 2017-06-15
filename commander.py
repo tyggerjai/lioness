@@ -44,7 +44,7 @@ class Commander():
 			if (1 > 0):
 				try:
 					self.log.log(0, " ({})trying {} with {} ".format(args.chan, args.command, args.text))
-					response = cmd.command(args.text) 
+					response = cmd.command(args) 
 					self.log.log(0, response.getText())
 				except:
 					e = sys.exc_info()[0]
