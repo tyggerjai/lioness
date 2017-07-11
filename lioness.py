@@ -162,6 +162,9 @@ class Lioness():
 					self.ts = self.get_timestamp(msg)
 					user = msg.get('user')
 					txt = msg.get('text', '')
+					if (re.match("^<https?://", txt)):
+						txt = '!store ' + txt 
+
 					if (re.match('!', txt)):
 						self.log.log(2, "COMMAND MESSAGE {}".format(txt))
 						txt = txt.split()
@@ -180,7 +183,7 @@ class Lioness():
 
 						reply = self.commander.handle(commandargs)
 
-						self.chanpost(reply.getChan(), reply.getText())
+						self.chanpost("#bot_testing", reply.getText())
 
 
 				

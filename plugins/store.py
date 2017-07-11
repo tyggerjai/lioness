@@ -16,13 +16,15 @@ class store(Plugin):
 
     def command(self, args):
         self.response.setText("Nope")
-        text = args.text
-        stored = text[0]
+        text = args.text.split()
         user = args.user
         tag = "generic"
 
         if (len(text) > 1):
-            tag = text[1]
+            tag = text[-1]
+            stored = " ".join(text[:-1])
+        else:
+            stored = text[0]
         try:
             self.error = self.dbconn.query("""INSERT INTO `store`(`text`, `tag`, `user`) VALUES(%s, %s, %s)""", (stored, tag, user))
             self.response.setText("Added!")

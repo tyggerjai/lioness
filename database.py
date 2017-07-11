@@ -29,8 +29,11 @@ class DataBase():
 			#print("++++++++++++\n")
 			
 			c = self.conn.cursor()
-			r = c.execute(query, holders)
+			try:
+				r = c.execute(query, holders)
 			#print("++++++++++++ \n {}\n".format(r))
-			r =  c.fetchall()
-			self.conn.commit()
+				r =  c.fetchall()
+				self.conn.commit()
+			except MySQLdb.Error as e:
+ 				r = ErrorMessage(e)
 			return r
