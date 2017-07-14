@@ -5,7 +5,9 @@
 class UserManager():
 	OPS = list()
 	OWNERS = list()
-
+	def __init__(self, dbconn):
+		self.dbconn = dbconn
+		self.error = 0
 	def add_owner(self, op):
 		self.OWNERS.append(op)
 		self.set_op(op)
@@ -22,7 +24,19 @@ class UserManager():
 
 	def is_op(self, id):
 		return (id in self.OPS)
-	
+
+	def checkuser(self, userID):
+		self.error = self.dbconn.query("SELECT `userID` FROM `users` WHERE `userID` = %s", [userID,] )
+		return self.error
+
+	# We'll get a user structure
+	def check_and_add(self, user):
+		
+		self.error = self.checkuser(user["user"]["id"])
+
+		if not self.error:
+			self.error = dbconn.query("INSERT INTO `users`(`userID`,  `name`) VALUES(%s, %s)", [user["user"]["id"], user["user"]["name"]] )
+		return self.error	
 
 	#def removeop(self, id):
 

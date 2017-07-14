@@ -17,7 +17,7 @@ class store(Plugin):
     def command(self, args):
         self.response.setText("Nope")
         text = args.text.split()
-        user = args.user["user"]["id"]
+        userID = args.user["user"]["id"]
         tag = "generic"
 
 
@@ -28,7 +28,7 @@ class store(Plugin):
             stored = text[0]
         try:
             # replace with function
-            self.error = self.dbconn.query("""INSERT INTO `store`(`text`, `tag`, `user`) VALUES(%s, %s, %s)""", (stored, tag, user))
+            self.error = self.dbconn.query("""INSERT INTO `store`(`text`, `tag`, `userID`) VALUES(%s, %s, %s)""", (stored, tag, userID))
             self.response.setText("Added for {}!".format(args.user["user"]["name"]))
         except:
             self.response.setText("Cannot la: {}".format(self.error))

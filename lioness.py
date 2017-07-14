@@ -52,7 +52,7 @@ class Lioness():
 		self.chanman = ChannelManager()
 		self.channels = self.chanman.get_channels()
 
-		self.people = UserManager()
+		self.people = UserManager(self.dbconn)
 		self.people.set_ops(config['owners'])
 		
 		self.commander = Commander(self.dbconn, self.log, config['prefix'])
@@ -163,6 +163,10 @@ class Lioness():
 					user = self.sc.api_call("users.info", user=msg.get('user'))
 					self.log.log(4, "User object: {}".format(user))
 					txt = msg.get('text', '')
+					if not "error" in user:
+					# probably a bot
+						self.people.check_and_add(user)
+						
 					if (re.match("^<https?://", txt)):
 						txt = '!store ' + txt 
 
