@@ -11,7 +11,7 @@ from commander import Commander, CommandArgs
 import yaml
 import logger
 
-PREFIX = "/home/solitaire/code/python/lio_orig/lioness/"
+PREFIX = "/home/solitaire/gits/lioness/"
 
 def load_configs(cfile):
 	"""Load the config from the given absolute path file name"""
