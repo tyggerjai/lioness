@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.5.54, for debian-linux-gnu (x86_64)
+-- MySQL dump 10.13  Distrib 5.5.50, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: lioness
 -- ------------------------------------------------------
--- Server version	5.5.54-0+deb8u1
+-- Server version	5.5.50-0+deb8u1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -18,7 +18,6 @@
 --
 -- Table structure for table `objecttypes`
 --
-use lioness;
 
 DROP TABLE IF EXISTS `objecttypes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -111,8 +110,13 @@ DROP TABLE IF EXISTS `store`;
 CREATE TABLE `store` (
   `text` text NOT NULL,
   `tag` varchar(255) NOT NULL,
-  `user` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `userID` varchar(255) NOT NULL,
+  `storeID` int(11) NOT NULL AUTO_INCREMENT,
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`storeID`),
+  KEY `fk_store_1_idx` (`userID`),
+  CONSTRAINT `fk_store_1` FOREIGN KEY (`userID`) REFERENCES `users` (`userID`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -121,7 +125,7 @@ CREATE TABLE `store` (
 
 LOCK TABLES `store` WRITE;
 /*!40000 ALTER TABLE `store` DISABLE KEYS */;
-INSERT INTO `store` VALUES ('y','a','U189HEXD5'),('fish','generic','U189HEXD5'),('fish','cake','U189HEXD5'),('actually, blame','python','U189HEXD5'),('<http://fish.com>','interesting','U189HEXD5'),('http','generic','U189HEXD5'),('<http://fish>','generic','U189HEXD5'),('<https://fish.com> This is a link about','fish','U189HEXD5'),('<http://random.com>','generic','U189HEXD5'),('<http://somewhere.com>','generic','U189HEXD5'),('<http://xkcd.com> awesome','stuff!','U189HEXD5'),('<http://fish.com>','carp','U189HEXD5'),('<http://random.com>','and?','U189HEXD5'),('<https://www.hoversurf.com>','#shutUpAndTakeMyMoney','U189HEXD5'),('<http://inspirobot.me>','generic','U189G0UNB'),('<http://generated.inspirobot.me/049/aXm8734xjU.jpg>','generic','U18A0GF0D'),('<https://youtu.be/DeAw6aXHzcY>','generic','U189G0UNB'),('<http://imgur.com/Ku4iPBz>','generic','U189G0UNB'),('<https://buzzconf.io/call-for-presenters>','generic','U189HEXD5'),('<https://www.youtube.com/watch?v=a-FHY5FNsWc>','generic','U189HEXD5'),('<https://www.scientificamerican.com/article/china-shatters-ldquo-spooky-action-at-a-distance-rdquo-record-preps-for-quantum-internet/?WT.mc_id=SA_TW_SPC_NEWS&amp;sf88969013=1>','generic','U189HEXD5'),('<https://www.youtube.com/watch?v=vMTchVXedkk>','generic','U18HWJHK4'),('<https://www.swinburne.edu.au/current-students/manage-course/exams-results-assessment/results/grades/higher-education/> Anyone looked into what \"They do not apply to engineering degrees\" means under the *Honours categories*','section?','U28G7R9RB'),('<http://joanielemercier.com/no-logram/> The second best thing you can do with a room that\'s constantly lightly','raining','U4WRWC90C'),('<https://hobbyking.com/en_us/catalog/product/view/id/63725/s/skateboard-conversion-kit/> Kinda takes the fun out of','it.','U189HEXD5'),('<https://cloud.google.com/blog/big-data/2017/06/build-your-own-machine-learning-powered-robot-arm-using-tensorflow-and-google-cloud>','generic','U189HEXD5');
+INSERT INTO `store` VALUES ('<http://random.com>','generic','U189HEXD5',1,'0000-00-00 00:00:00'),('<http://somewhere.com>','generic','U189HEXD5',2,'0000-00-00 00:00:00'),('<http://xkcd.com> awesome','stuff!','U189HEXD5',3,'0000-00-00 00:00:00'),('<http://random.com>','and?','U189HEXD5',4,'0000-00-00 00:00:00'),('<https://www.hoversurf.com>','#shutUpAndTakeMyMoney','U189HEXD5',5,'0000-00-00 00:00:00'),('<http://inspirobot.me>','generic','U189G0UNB',6,'0000-00-00 00:00:00'),('<http://generated.inspirobot.me/049/aXm8734xjU.jpg>','generic','U18A0GF0D',7,'0000-00-00 00:00:00'),('<https://youtu.be/DeAw6aXHzcY>','generic','U189G0UNB',8,'0000-00-00 00:00:00'),('<http://imgur.com/Ku4iPBz>','generic','U189G0UNB',9,'0000-00-00 00:00:00'),('<https://buzzconf.io/call-for-presenters>','generic','U189HEXD5',10,'0000-00-00 00:00:00'),('<https://www.youtube.com/watch?v=a-FHY5FNsWc>','generic','U189HEXD5',11,'0000-00-00 00:00:00'),('<https://www.scientificamerican.com/article/china-shatters-ldquo-spooky-action-at-a-distance-rdquo-record-preps-for-quantum-internet/?WT.mc_id=SA_TW_SPC_NEWS&amp;sf88969013=1>','generic','U189HEXD5',12,'0000-00-00 00:00:00'),('<https://www.youtube.com/watch?v=vMTchVXedkk>','generic','U18HWJHK4',13,'0000-00-00 00:00:00'),('<https://www.swinburne.edu.au/current-students/manage-course/exams-results-assessment/results/grades/higher-education/> Anyone looked into what \"They do not apply to engineering degrees\" means under the *Honours categories*','section?','U28G7R9RB',14,'0000-00-00 00:00:00'),('<http://joanielemercier.com/no-logram/> The second best thing you can do with a room that\'s constantly lightly','raining','U4WRWC90C',15,'0000-00-00 00:00:00'),('<https://hobbyking.com/en_us/catalog/product/view/id/63725/s/skateboard-conversion-kit/> Kinda takes the fun out of','it.','U189HEXD5',16,'0000-00-00 00:00:00'),('<https://cloud.google.com/blog/big-data/2017/06/build-your-own-machine-learning-powered-robot-arm-using-tensorflow-and-google-cloud>','generic','U189HEXD5',17,'0000-00-00 00:00:00');
 /*!40000 ALTER TABLE `store` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -133,13 +137,13 @@ DROP TABLE IF EXISTS `users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `users` (
-  `userID` char(11) NOT NULL UNIQUE,
+  `userID` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
   `title` varchar(255) DEFAULT NULL,
   `phone` bigint(20) DEFAULT NULL,
   `address` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`userID`)
-  
+  PRIMARY KEY (`userID`),
+  UNIQUE KEY `userID_UNIQUE` (`userID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -149,7 +153,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES ('U189HEXD5','jai','botmaster',NULL,NULL);
+INSERT INTO `users` VALUES ('U189G0UNB','',NULL,NULL,NULL),('U189HEXD5','jai','botmaster',NULL,NULL),('U18A0GF0D','',NULL,NULL,NULL),('U18HWJHK4','',NULL,NULL,NULL),('U28G7R9RB','',NULL,NULL,NULL),('U4WRWC90C','',NULL,NULL,NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -162,4 +166,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-07-11 17:51:11
+-- Dump completed on 2017-07-14 21:59:22
