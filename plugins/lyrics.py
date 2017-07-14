@@ -6,16 +6,8 @@ from random import randint
 
 class lunch(Plugin):	
 
-	prefixes = (
-		"Let's go to ",
-		"Why not try ",
-		"I feel like "
-		)
-
-
-
 	def __init__(self, dbconn):
-		self.keyword = "lunch"
+		self.keyword = "lyrics"
 		self.dbconn = dbconn
 
 	def command(self, args):
@@ -32,15 +24,14 @@ class lunch(Plugin):
 				response.setText(resp)
 				
 			else:
-				response.setText(self.choose_lunch())   
+				response.setText(self.choose_lyric())   
 		except: 
 
 			e = sys.exc_info()[0]
 			response.setText( "NFI {}".format(e))
 		return response
 
-	def choose_lunch(self, naked = 0):
-		prefix =  self.prefixes[randint(0, len(self.prefixes) -1)]  
+	def choose_lyric(self):
 		lunches = self.get_lunches()
 		lunch = lunches[randint(0,len(lunches) -1)]
 		if (naked):
