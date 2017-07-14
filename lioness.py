@@ -11,7 +11,7 @@ from commander import Commander, CommandArgs
 import yaml
 import logger
 
-PREFIX = "/home/solitaire/lioness/"
+PREFIX = "/home/solitaire/code/python/lio_orig/lioness/"
 
 def load_configs(cfile):
 	"""Load the config from the given absolute path file name"""
@@ -160,7 +160,8 @@ class Lioness():
 				
 				for msg in resp['messages']:
 					self.ts = self.get_timestamp(msg)
-					user = msg.get('user')
+					user = self.sc.api_call("users.info", user=msg.get('user'))
+					self.log.log(4, "User object: {}".format(user))
 					txt = msg.get('text', '')
 					if (re.match("^<https?://", txt)):
 						txt = '!store ' + txt 

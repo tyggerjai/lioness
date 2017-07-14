@@ -29,11 +29,14 @@ class Commander():
 		response = PluginResponse()
 		self.log.log(2,"Message from :{}:{}:{}".format(args.user, args.command, args.text))
 	
+		# do we know this user?
+
 		#if (args.text is not None):
 		#	opts, content = self.parse_opts(args.text)
 
 
 		#XXX All commands should appear here, and load the builtins first. 
+		# Really, aren't builtins just plugins that ship with the bot?
 		#Commands should have keywords and "level". 
 		#Users should also have "rank"
 		self.log.log(2, "Looking for {}".format(args.command))
