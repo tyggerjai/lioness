@@ -9,5 +9,5 @@ class Logger():
 
 	def log(self,level, message):
 		if (level < self.DEBUGLEVEL):
-			with open(self.file, "a") as f:
+			with open(self.file, "a+") as f:
 				f.write(str(message)+"\n")

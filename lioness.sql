@@ -77,7 +77,7 @@ DROP TABLE IF EXISTS `reviews`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `reviews` (
   `reviewID` int(11) NOT NULL AUTO_INCREMENT,
-  `reviewerID` char(11) NOT NULL,
+  `reviewerID` varchar(255) NOT NULL,
   `reviewType` int(11) NOT NULL,
   `reviewedID` int(11) NOT NULL,
   `review` text,
