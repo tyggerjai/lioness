@@ -1,6 +1,0 @@
-slackclient
-yaml
-unittest
-MySQLdb
-logger
-imp
