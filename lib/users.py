@@ -37,9 +37,14 @@ class UserManager():
 
                 return self.error
 
+        def get_user_level(self,userID):
+                levels = self.dbconn.query("SELECT level FROM users WHERE `userID` = %s", [userID,] )
+                print(levels)
+                return levels[0][0]
+
         def update_user(self, userID):
                 user_info = self.sc.api_call("users.info", user=userID)
-                print("Updating {0}\n".format(user_info["user"]["name"]))
+               # print("Updating {0}\n".format(user_info["user"]["name"]))
                 self.error = self.dbconn.query("UPDATE `users` SET `name` = %s WHERE `userID` = %s", [user_info["user"]["name"], userID,] )
                 return self.error
 

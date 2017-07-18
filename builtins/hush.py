@@ -11,13 +11,12 @@ class hush(Plugin):
         self.error = ""
         self.bot = ""
         self.builtin = 1
+        self.level = 50
         STATUS = ("QUIET", "LOUD")
 
 
     def command(self, args):
         self.response.setText("Nope")
-        print("textlen: {0}\n".format(len(args.text.split(" "))))
-        print(args.text)
         verbose = self.bot.verbose
         if (len(args.text) > 0):
             if (args.text == "status"):
@@ -27,7 +26,7 @@ class hush(Plugin):
             elif (args.text[0] == 1) :
                 self.bot.verbose = 1
         
-        self.response.setText("Set verbose to {0}".format(self.bot.verbose))
+        self.response.setText("Set verbose to {0}".format(STATUS[self.bot.verbose]))
 
 
         return self.response

@@ -74,7 +74,9 @@ class PluginManager():
                             if obj.builtin:
                                 obj.bot = self.bot
                         except:
-                            pass
+                            obj.level = 0
+                            obj.builtin = 0
+                            obj.bot = ""
                         #print("--Registering {}".format(obj.keyword))
                         for kw in obj.keyword: 
                             if kw not in self.COMMANDS:

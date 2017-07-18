@@ -6,95 +6,82 @@ import re
 import sys
 
 class CommandArgs():
-        def __init__(self):
-                self.user = ''
-                self.command = ''
-                self.text = ''
-                self.chan = ''
-
+    def __init__(self):
+        self.user = ''
+        self.command = ''
+        self.text = ''
+        self.chan = ''
+        
 
 class Commander():
 
-        def __init__(self, bot, prefix):
-                self.dbconn = bot.dbconn;
-                self.log = bot.log
-                
-                plugin = PluginManager(bot, prefix)
+    def __init__(self, bot, prefix, enable_plugins):
+        self.dbconn = bot.dbconn;
+        self.log = bot.log
+        self.bot = bot
+        self.enable_plugins = enable_plugins
+        plugin = PluginManager(bot, prefix)
 
-                self.commands = plugin.get_plugins()
-                self.log.warning("COMMANDS: {}".format(self.commands))
+        self.commands = plugin.get_plugins()
+        self.log.warning("COMMANDS: {}".format(self.commands))
 
-        def handle(self, args):
-                self.log.critical( "CHANNEL: " + args.chan)
-                response = PluginResponse()
-                self.log.warning("Message from :{}:{}:{}".format(args.user, args.command, args.text))
+    def handle(self, args):
+        self.log.critical( "CHANNEL: " + args.chan)
+        response = PluginResponse()
+        self.log.warning("Message from :{}:{}:{}".format(args.user, args.command, args.text))
+    
+        self.log.warning( "Looking for {}".format(args.command))
         
-                # do we know this user?
+        if (self.commands.get(args.command)):
+            cmd = self.commands[args.command]
+            
+            if (cmd.builtin or self.enable_plugins):
+                if (self.auth_user(args.user["user"]["id"], cmd.level)):
 
-                #if (args.text is not None):
-                #       opts, content = self.parse_opts(args.text)
-
-
-                #XXX All commands should appear here, and load the builtins first. 
-                # Really, aren't builtins just plugins that ship with the bot?
-                #Commands should have keywords and "level". 
-                #Users should also have "rank"
-                self.log.warning( "Looking for {}".format(args.command))
-                
-                if (self.commands.get(args.command)):
-                        cmd = self.commands[args.command]
-
-                        if (1 > 0):
-                                try:
-                                        self.log.critical( " ({})trying {} with {} ".format(args.chan, args.command, args.text))
-                                        response = cmd.command(args) 
-                                        self.log.warning( response.getText())
-                                except:
-                                        e = sys.exc_info()[0]
-                                        self.log.critical( "Could not perform plugin! {}".format(e))
-                                        response.setText("Error with plugin. Blame {}".format("jai"))
-#
-#               elif (args.user ):
-#                       if (args.command == 'die'):
-#                               self.log.critical( "{} says die!".format(args.user))
-#                               _connect = 0
-#                       elif (args.command == 'hup'):
-#                               _connect = 2
-#                       elif (args.command == 'debug' ):
-#                               try:
-#                                       lev = int(args.text[0])
-#                                       self.log.DEBUG_LEVEL = lev
-#                                       response.setText ("Setting log level to {}".format(lev))
-#                               except:
-#                                       response.setText("Cannot set level {}".format(lev))
-#                       else:
-#                               response.setText("#bot_testing","What you talkin about, Willis?")
+                    self.bot.log.critical("Authed  {0} for {1}".format(args.user["user"]["name"], args.command))
+                    try:
+                        self.log.critical( " ({})trying {} with {} ".format(args.chan, args.command, args.text))
+                        response = cmd.command(args) 
+                        self.log.warning( response.getText())
+                    except:
+                        e = sys.exc_info()[0]
+                        self.log.critical( "Could not perform plugin! {}".format(e))
+                        response.setText("Error with plugin. Blame {}".format("jai"))
                 else:
-                        response.setText("I have no idea what you are asking me to do.")
+                    response.setText("Forbidden to you!")
+            else:
+                response.setText("Unable to comply")
+        else:
+            response.setText("I have no idea what you are asking me to do.")
 
-                response.setChan(args.chan)
-                return response
+        response.setChan(args.chan)
+        return response
 
-        def parse_opts(self, text):
-                self.log.warning( "Trying to parse")
-                opts = dict()
-                content = ''
-                key = ''
+    def auth_user(self, userID, level):
+        if (self.bot.people.get_user_level(userID) > level):
+            return 1
+        return 0
 
-                if (len(text) == 0):
-                        return (opts, content)
+    def parse_opts(self, text):
+        self.log.warning( "Trying to parse")
+        opts = dict()
+        content = ''
+        key = ''
 
-                for token in text.split():
-                        if re.match("-", token):
-                                key = token
-                                while (key[0] == "-"):
-                                        key = key[1:]
+        if (len(text) == 0):
+            return (opts, content)
 
-                        else:
-                                if (key != ''):
-                                        opts[key] = token
-                                        key = ''
-                                else:
-                                        content += str(token) + " "
+        for token in text.split():
+            if re.match("-", token):
+                key = token
+                while (key[0] == "-"):
+                    key = key[1:]
 
-                return(opts, content)
+            else:
+                if (key != ''):
+                    opts[key] = token
+                    key = ''
+                else:
+                    content += str(token) + " "
+
+        return(opts, content)
