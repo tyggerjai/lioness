@@ -1,4 +1,4 @@
-from plugins.base import PluginResponse, Plugin
+from plugins import PluginResponse, Plugin
 import sys
 
 from random import randint

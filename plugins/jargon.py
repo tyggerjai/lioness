@@ -1,7 +1,7 @@
 ########
 # Fetches jargon file entries
 ######
-from plugins.base import PluginResponse, Plugin
+from plugins import PluginResponse, Plugin
 import sys
 import requests
 import html2text

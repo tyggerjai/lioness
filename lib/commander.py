@@ -1,7 +1,7 @@
 ####################
 # Command handler for Lioness bot. This is where the heavy lifting happens.
 ###
-from plugins.base import PluginManager, PluginResponse
+from plugins import PluginManager, PluginResponse
 import re
 import sys
 

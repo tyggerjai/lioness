@@ -1,8 +1,8 @@
 ########
 # Base URL storer
 ######
-from plugins.base import PluginResponse, Plugin
 import sys
+from plugins import PluginResponse, Plugin
 import requests
 import html2text
 

@@ -1,6 +1,6 @@
 import unittest
 from database import DataBase
-from plugins.fetchurl import fetchurl
+from fetchurl import fetchurl
 
 class testfetchurl(unittest.TestCase):  
                 

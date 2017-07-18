@@ -3,7 +3,7 @@
 ######
 
 import unittest
-from plugins.jargon import jargon
+from jargon import jargon
 
 class testjargon(unittest.TestCase):    
         def setUp(self):

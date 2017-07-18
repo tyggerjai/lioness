@@ -1,6 +1,6 @@
 import unittest
 from database import DataBase
-from plugins.lunch import lunch
+from lunch import lunch
 
 class testlunch(unittest.TestCase):     
         def setUp(self):
