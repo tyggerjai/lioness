@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 
 import argparse
 import time
@@ -133,7 +132,8 @@ class Lioness():
                 self.log.critical("Timestamp: {}".format(self.ts))
 
                 self.log.critical( "Checking API")
-                self.log.warning( self.sc.api_call("api.test"))
+                if (self.sc.api_call("api.test")["args"]["ok"] == "True"):
+                    self.log.critical("API test ok")
                 #DEBUG_LEVEL = 0
         def parse_response(self, response, cname):
                 
@@ -225,7 +225,7 @@ if __name__ == '__main__':
         
         log = logging.getLogger("Rotating Log")
         log.setLevel(conf['debug_lvl'])
-        handler = TimedRotatingFileHandler( conf['prefix']+ "/log/",
+        handler = TimedRotatingFileHandler( conf['prefix']+ "/log/lioness_log",
         when="d", interval=1, backupCount=7)
         log.addHandler(handler) 
 
