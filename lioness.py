@@ -7,7 +7,8 @@ import sys
 from slackclient import SlackClient
 import re
 import yaml
-
+import logging
+from logging.handlers import TimedRotatingFileHandler
 
 
 
@@ -43,10 +44,10 @@ class Lioness():
                         self.status = "BAD TOKEN"
 
                 self.dbconn = DataBase(config['dbname'], config['username'], config['passwd'])
-                self.log.log(0, "DBConn {}".format(self.dbconn))
+                self.log.critical("DBConn {}".format(self.dbconn))
 
                 tables = self.dbconn.show_tables()
-                self.log.log(0, tables)
+                self.log.info( tables)
 
                 self.chanman = ChannelManager()
                 self.channels = self.chanman.get_channels()
@@ -59,8 +60,8 @@ class Lioness():
                 self.botname = config['botname']
                 self.icon = config['icon']
                 
-                self.log.log(1,"Channels to join:")
-                self.log.log(1,self.channels['join'])
+                self.log.info("Channels to join:")
+                self.log.info(self.channels['join'])
 
                 
 
@@ -76,11 +77,11 @@ class Lioness():
                 return 1
 
         def chanpost(self,mychannel, message):
-                self.log.log(2, "Chanpost: {} {}".format(mychannel, message))
+                self.log.debug("Chanpost: {} {}".format(mychannel, message))
                 resp = self.sc.api_call(
                 "chat.postMessage", channel=mychannel, text=message,
                  username=self.botname, icon_url=self.icon)
-                self.log.log(2, resp)
+                self.log.debug( resp)
                 return resp
 
 
@@ -88,30 +89,30 @@ class Lioness():
                 for op in self.people.get_owners():
                         resp = self.sc.api_call("im.open", user = own['id'])
                         own['chat'] = resp['channel']['id']
-                        self.log.log(1, "Pinging owner {}".format(own))
-                        self.log.log(1,sc.api_call("chat.postMessage", as_user="true:", channel=own['chat'], text=message))
+                        self.log.debug( "Pinging owner {}".format(own))
+                        self.log.debug(sc.api_call("chat.postMessage", as_user="true:", channel=own['chat'], text=message))
 
 
         def add_chans(self,chans):
                 for chan in chans['channels']:
                         self.chanman.set_lookup(chan['id'], chan['name'])               
                 
-                        self.log.log(3,"{} : {}".format(chan['name'], chan['id']))
+                        self.log.debug("{} : {}".format(chan['name'], chan['id']))
                         self.channels['known'].append(chan['name'])
 
                         if (chan['name'] in self.channels['join']):
 
-                                self.log.log(2, "Found watching channel {}".format(chan['name']))
+                                self.log.debug( "Found watching channel {}".format(chan['name']))
                                 self.channels['watching'].append(chan['id'])
 
                 for chan in self.channels['watching']:
-                        self.log.log(3,"Watching {}".format(chan))                      
+                        self.log.debug("Watching {}".format(chan))                      
 
 
         def get_timestamp(self,msg):
                 if (msg.get('ts')):
                         if (float(msg['ts']) > float(self.ts)):
-                                self.log.log(0, "Setting timestamp {} ".format(msg['ts']))
+                                self.log.error( "Setting timestamp {} ".format(msg['ts']))
                         return msg['ts']
                 else:
                         return self.ts
@@ -126,20 +127,20 @@ class Lioness():
                 resp = self.chanpost("#bot_testing", "boop")
                 
                 for k,v in resp.items():
-                        self.log.log(3,"Key: {} Value: {} \n".format(k, v))
+                        self.log.debug("Key: {} Value: {} \n".format(k, v))
                 
                 self.ts = resp.get('ts')
-                self.log.log(0,"Timestamp: {}".format(self.ts))
+                self.log.critical("Timestamp: {}".format(self.ts))
 
-                self.log.log(1, "Checking API")
-                self.log.log(1, self.sc.api_call("api.test"))
+                self.log.critical( "Checking API")
+                self.log.warning( self.sc.api_call("api.test"))
                 #DEBUG_LEVEL = 0
         def parse_response(self, response, cname):
                 
             for msg in response['messages']:
                 self.ts = self.get_timestamp(msg)
                 user = self.sc.api_call("users.info", user=msg.get('user'))
-                self.log.log(5, "User object: {}".format(user))
+                self.log.debug( "User object: {}".format(user))
                 txt = msg.get('text', '')
                 if not "error" in user:
                 # probably a bot
@@ -149,7 +150,7 @@ class Lioness():
                         txt = '!store ' + txt 
 
                 if (re.match('!', txt)):
-                        self.log.log(2, "COMMAND MESSAGE {}".format(txt))
+                        self.log.debug( "COMMAND MESSAGE {}".format(txt))
                         txt = txt.split()
 
                         commandargs = CommandArgs()
@@ -170,7 +171,7 @@ class Lioness():
                 while(_connect):
                         # HUP received, reload the plugins, disconnect from the server and reconnect
                         if (_connect == 2):
-                                self.log.log(0, "++++++++++++ REBOOT OUT OF CHEESE +++++")
+                                self.log.critical( "++++++++++++ REBOOT OUT OF CHEESE +++++")
                                 self.disconnect()
                                 if (self.connect_to_server()):
                                         #self.plugins = self.reload_plugins()
@@ -221,12 +222,14 @@ if __name__ == '__main__':
         from channel import ChannelManager
         from users import UserManager
         from commander import Commander, CommandArgs
-        import logger
         
-        log = logger.Logger(conf['debug_lvl'], conf['prefix'] + conf['logfile'])
-        
+        log = logging.getLogger("Rotating Log")
+        log.setLevel(conf['debug_lvl'])
+        handler = TimedRotatingFileHandler( conf['prefix']+ "/log/",
+        when="d", interval=1, backupCount=7)
+        log.addHandler(handler) 
 
-        log.log(2,"CONFIGS: {}".format(conf))   
+        log.debug("CONFIGS: {}".format(conf))   
         
         lioness = Lioness(conf, log)    
         if (lioness.connect_to_server()):       

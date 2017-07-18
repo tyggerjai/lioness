@@ -22,12 +22,12 @@ class Commander():
                 plugin = PluginManager(dbconn, log, prefix)
 
                 self.commands = plugin.get_plugins()
-                self.log.log(2, "COMMANDS: {}".format(self.commands))
+                self.log.warning("COMMANDS: {}".format(self.commands))
 
         def handle(self, args):
-                self.log.log(0, "CHANNEL: " + args.chan)
+                self.log.critical( "CHANNEL: " + args.chan)
                 response = PluginResponse()
-                self.log.log(2,"Message from :{}:{}:{}".format(args.user, args.command, args.text))
+                self.log.warning("Message from :{}:{}:{}".format(args.user, args.command, args.text))
         
                 # do we know this user?
 
@@ -39,24 +39,24 @@ class Commander():
                 # Really, aren't builtins just plugins that ship with the bot?
                 #Commands should have keywords and "level". 
                 #Users should also have "rank"
-                self.log.log(2, "Looking for {}".format(args.command))
+                self.log.warning( "Looking for {}".format(args.command))
                 
                 if (self.commands.get(args.command)):
                         cmd = self.commands[args.command]
 
                         if (1 > 0):
                                 try:
-                                        self.log.log(0, " ({})trying {} with {} ".format(args.chan, args.command, args.text))
+                                        self.log.critical( " ({})trying {} with {} ".format(args.chan, args.command, args.text))
                                         response = cmd.command(args) 
-                                        self.log.log(0, response.getText())
+                                        self.log.warning( response.getText())
                                 except:
                                         e = sys.exc_info()[0]
-                                        self.log.log(0, "Could not perform plugin! {}".format(e))
+                                        self.log.critical( "Could not perform plugin! {}".format(e))
                                         response.setText("Error with plugin. Blame {}".format("jai"))
 #
 #               elif (args.user ):
 #                       if (args.command == 'die'):
-#                               self.log.log(0, "{} says die!".format(args.user))
+#                               self.log.critical( "{} says die!".format(args.user))
 #                               _connect = 0
 #                       elif (args.command == 'hup'):
 #                               _connect = 2
@@ -76,7 +76,7 @@ class Commander():
                 return response
 
         def parse_opts(self, text):
-                self.log.log(2, "Trying to parse")
+                self.log.warning( "Trying to parse")
                 opts = dict()
                 content = ''
                 key = ''
