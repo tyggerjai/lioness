@@ -42,6 +42,7 @@ class UserManager():
                 print("Updating {0}\n".format(user_info["user"]["name"]))
                 self.error = self.dbconn.query("UPDATE `users` SET `name` = %s WHERE `userID` = %s", [user_info["user"]["name"], userID,] )
                 return self.error
+
         def check_user(self, userID):
                 self.error = self.dbconn.query("SELECT `userID` FROM `users` WHERE `userID` = %s", [userID,] )
                 return self.error
@@ -49,10 +50,11 @@ class UserManager():
         # We'll get a user structure
         def check_and_add(self, user):
                 
-                user = self.check_user(user["user"]["id"])
+                exists = self.check_user(user["user"]["id"])
 
-                if not user:
-                        self.error = dbconn.query("INSERT INTO `users`(`userID`,  `name`) VALUES(%s, %s)", [user["user"]["id"], user["user"]["name"]] )
+                if not exists:
+                        self.error = self.dbconn.query("INSERT INTO `users`(`userID`,  `name`) VALUES(%s, %s)", [user["user"]["id"], user["user"]["name"],] )
+                        print(self.error)
                 return self.error       
 
         #def removeop(self, id):

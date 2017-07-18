@@ -4,7 +4,7 @@ import sys
 
 class jibo(Plugin):
         def __init__(self, dbconn):
-                self.keyword = "jibo"
+                self.keyword = ("jibo",)
                 
         def command(self, args):
                 response = PluginResponse()

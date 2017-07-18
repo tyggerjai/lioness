@@ -8,7 +8,7 @@ import html2text
 
 class fetchurl(Plugin):
         def __init__(self, dbconn):
-                self.keyword = "fetchurl"
+                self.keyword = ("fetchurl",)
                 self.response = PluginResponse()
 
         def command(self, args):

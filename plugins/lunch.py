@@ -15,7 +15,7 @@ class lunch(Plugin):
 
 
         def __init__(self, dbconn):
-                self.keyword = "lunch"
+                self.keyword = ("lunch",)
                 self.dbconn = dbconn
 
         def command(self, args):

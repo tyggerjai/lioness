@@ -7,7 +7,7 @@ from random import randint
 class lunch(Plugin):    
 
         def __init__(self, dbconn):
-                self.keyword = "lyrics"
+                self.keyword = ("lyrics",)
                 self.dbconn = dbconn
 
         def command(self, args):

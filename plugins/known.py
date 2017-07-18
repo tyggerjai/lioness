@@ -6,7 +6,7 @@ import sys
 
 class store(Plugin):
     def __init__(self, dbconn):
-        self.keyword = "known"
+        self.keyword = ("known",)
         self.response = PluginResponse()
         self.error = ""
         self.dbconn = dbconn

@@ -8,7 +8,7 @@ import html2text
 
 class store(Plugin):
     def __init__(self, dbconn):
-        self.keyword = "store"
+        self.keyword = (A,)"store"
         self.response = PluginResponse()
         self.error = ""
         self.dbconn = dbconn

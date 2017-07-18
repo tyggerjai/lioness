@@ -10,7 +10,7 @@ MAXLINES = 12
 
 class jargon(Plugin):
         def __init__(self, dbconn):
-                self.keyword = "jargon"
+                self.keyword = ("jargon",)
                 self.response = PluginResponse()
 
         def command(self, args):

@@ -35,6 +35,7 @@ class Lioness():
                 """
         def __init__(self, config, log):
                 """Takes config dict and logger object to initialise """
+                self.verbose = 1
                 self.log = log
                 self.status = "ok"
                 try:
@@ -54,9 +55,9 @@ class Lioness():
 
                 self.people = UserManager(self.dbconn, self.sc)
                 self.people.set_ops(config['owners'])
-                #self.people.update_users()
+#                self.people.update_users()
                 
-                self.commander = Commander(self.dbconn, self.log, config['prefix'])
+                self.commander = Commander(self, config['prefix'])
                 self.botname = config['botname']
                 self.icon = config['icon']
                 
@@ -190,7 +191,7 @@ class Lioness():
                                         )
                                 if "messages" in resp:
                                     reply = self.parse_response(resp, cname)
-                                    if reply:
+                                    if reply and self.verbose:
                                         self.chanpost("#bot_testing", reply.getText())
 
 

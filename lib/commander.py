@@ -15,11 +15,11 @@ class CommandArgs():
 
 class Commander():
 
-        def __init__(self, dbconn, log, prefix):
-                self.dbconn = dbconn;
-                self.log = log
+        def __init__(self, bot, prefix):
+                self.dbconn = bot.dbconn;
+                self.log = bot.log
                 
-                plugin = PluginManager(dbconn, log, prefix)
+                plugin = PluginManager(bot, prefix)
 
                 self.commands = plugin.get_plugins()
                 self.log.warning("COMMANDS: {}".format(self.commands))
