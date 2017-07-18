@@ -56,7 +56,7 @@ class Lioness():
 
         self.people = UserManager(self.dbconn, self.sc)
         self.people.set_ops(config['owners'])
-#        self.people.update_users()
+        self.people.update_users()
         
         self.commander = Commander(self, config['prefix'], config['enable_plugins'])
         self.botname = config['botname']

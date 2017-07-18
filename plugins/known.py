@@ -22,8 +22,15 @@ class store(Plugin):
             
         
         try:
-            self.error = self.dbconn.query("SELECT * FROM `users`", [])
-            self.response.setText(self.error)
+
+            users = self.dbconn.query("SELECT `title`, `name` FROM `users`", [])
+            resp = "TISM know the following people obey the TED commandments: \n"
+            print(users)
+            for user in users:
+                if (user[0]):
+                    resp += "{} ".format(user[0])    
+                resp += "{} \n".format(user[1])
+            self.response.setText(resp)
         except:
             self.response.setText("Cannot la: {}".format(self.error))
 
