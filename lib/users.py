@@ -1,6 +1,7 @@
 ##############3
 # It's all about the people....
 # Wed 07 Sep 2016 17:24:37 AEST
+import re
 
 class UserManager():
         OPS = list()
@@ -63,6 +64,22 @@ class UserManager():
                 return self.error       
 
         #def removeop(self, id):
-
-
+        def user_by_name(self, name):
+                self.error = list()
+                if re.match('<@', name):
+                    print("Tokenizing {}".format(name))
+                    uid = self.detokenize(name)
+                    print("Searching for {}".format(uid))
                 
+                    self.error = self.dbconn.query("SELECT `name` FROM `users` WHERE `userID` = %s", [uid,] )
+                else:
+                    self.error = self.dbconn.query("SELECT `name` FROM `users` WHERE `name` = %s", [name,] )
+                return self.error 
+
+        def detokenize(self, text):
+            print(text)
+            text = re.sub("<@", "", text)
+            print(text)
+            text = re.sub(">", "", text)
+            print(text)
+            return text

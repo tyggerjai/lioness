@@ -71,7 +71,6 @@ class Lioness():
       self.log.critical("Connecting")  
       if (self.sc.rtm_connect()):
         self.log.critical("Connected")  
-        self.ping_owners("Here I am!")
         return 1
       return 0
 
@@ -87,6 +86,18 @@ class Lioness():
         self.log.debug( resp)
         return resp
 
+    def send_im(self, userID, message):
+            self.log.debug("Opening IM for {}".format(userID))
+            try: 
+                resp = self.sc.api_call("im.open", user = userID)
+                self.log.debug(resp)
+                chat = resp['channel']['id']
+                self.log.debug("sending to im chan {}".format(chat))
+                resp = self.chanpost(chat, message)
+                #resp = sc.api_call("chat.postMessage", as_user="true", channel=chat, text=message)
+                self.log.debug(resp)
+            except:
+                self.log.debug("YEah, nah {}".format(sys.exc_info()[1]))
 
     def ping_owners(self,message):
         for op in self.people.get_owners():
@@ -149,24 +160,24 @@ class Lioness():
         # probably a bot
             self.people.check_and_add(user)
                         
-        if (re.match("^<https?://", txt)):
-            txt = '!store ' + txt 
+            if (re.match("^<https?://", txt)):
+                txt = '!store ' + txt 
 
-        if (re.match('!', txt)):
-            self.log.debug( "COMMAND MESSAGE {}".format(txt))
-            txt = txt.split()
+            if (re.match('!', txt)):
+                self.log.debug( "COMMAND MESSAGE {}".format(txt))
+                txt = txt.split()
 
-            commandargs = CommandArgs()
+                commandargs = CommandArgs()
                         
-            commandargs.chan = cname
-            commandargs.user = user
-            commandargs.command = txt[0][1:]
-            commandargs.text = ' '
+                commandargs.chan = cname
+                commandargs.user = user
+                commandargs.command = txt[0][1:]
+                commandargs.text = ' '
         
-            if (len(txt) > 1):
-                commandargs.text = ' '.join(txt[1:])
+                if (len(txt) > 1):
+                    commandargs.text = ' '.join(txt[1:])
                     
-            return(self.commander.handle(commandargs))
+                return(self.commander.handle(commandargs))
 
 
     def listen(self):
@@ -194,7 +205,8 @@ class Lioness():
                 if "messages" in resp:
                   reply = self.parse_response(resp, cname)
                   if reply and self.verbose:
-                    self.chanpost("#bot_testing", reply.getText())
+                    self.send_im(reply.getUser(), reply.getText())
+                    self.chanpost("#bot_testing", reply.getUser() + " : " + reply.getText())
 
 
                 
