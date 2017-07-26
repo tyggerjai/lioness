@@ -24,13 +24,19 @@ class remind(Plugin):
         self.bot = ""
         self.builtin = 1
         self.level = -1
+
         self.cal = pdt.Calendar()
         self.usage = """ remind [user] [time] <message>. Defaults to
         "me",  "tomorrow"  """
 
+    def add_job(self, args):
+        self.bot.get_next_job()
+        resp = self.bot.dbconn.query("""INSERT INTO reminders(`userID`, `targetID`, `job`, `jobtime`, `args`) VALUES(%s, %s, %s, %s, %s)""", args)
+        self.bot.log.debug(resp)
+          
 
     def command(self, args):
-        self.response.setText("Nope")
+        self.response.setText(self.usage)
         text = args.text.split(" ")
         self.bot.log.critical(text[0])
         remindtime = ""
@@ -41,9 +47,11 @@ class remind(Plugin):
             return self.response
 
         try:
-            maybetime = self.cal.parse(args.text, datetime.now(timezone('UTC')))
+            maybetime = self.cal.parse(args.text)
+            print("Time from {}".format(args.text))
+            print(maybetime)
         except:
-            maybetime = self.cal.parse("tomorrow", datetime.now(timezone('UTC')))
+            maybetime = self.cal.parse("tomorrow")
             
         remindtime = time.strftime('%Y-%m-%d %H:%M:%S', maybetime[0]) 
        
@@ -60,7 +68,7 @@ class remind(Plugin):
             
         if text[0] == "to":
             text = text[1:]
-
+        self.add_job((args.user["user"]["id"], user, "text", remindtime, " ".join(text) ))
         self.response.setText("Reminding {} at {} : {}".format(user, remindtime, " ".join(text)))
         
         return self.response
