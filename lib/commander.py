@@ -21,14 +21,13 @@ class Commander():
         self.bot = bot
         self.enable_plugins = enable_plugins
         plugin = PluginManager(bot, prefix)
-
         self.commands = plugin.get_plugins()
         self.log.warning("COMMANDS: {}".format(self.commands))
 
     def handle(self, args):
         self.log.critical( "CHANNEL: " + args.chan)
         response = PluginResponse()
-        self.log.warning("Message from :{}:{}:{}".format(args.user, args.command, args.text))
+        #self.log.warning("Message from :{}:{}:{}".format(args.user, args.command, args.text))
     
         self.log.warning( "Looking for {}".format(args.command))
         
@@ -38,13 +37,16 @@ class Commander():
             if (cmd.builtin or self.enable_plugins):
                 if (self.auth_user(args.user["user"]["id"], cmd.level)):
 
+
                     self.bot.log.critical("Authed  {0} for {1}".format(args.user["user"]["name"], args.command))
                     try:
                         self.log.critical( " ({})trying {} with {} ".format(args.chan, args.command, args.text))
                         response = cmd.command(args) 
+                        response.setUser(args.user["user"]["id"])
                         self.log.warning( response.getText())
                     except:
-                        e = sys.exc_info()[0]
+                        e = " {} : {}".format( sys.exc_info()[0],  sys.exc_info()[1])
+                        
                         self.log.critical( "Could not perform plugin! {}".format(e))
                         response.setText("Error with plugin. Blame {}".format("jai"))
                 else:

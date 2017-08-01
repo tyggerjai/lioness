@@ -7,6 +7,11 @@ import sys
 class PluginResponse(object):
         _text = ''
         _chan = ''
+        _user = ''
+        def setUser(self, user):
+                self._user = user
+        def getUser(self):
+                return str(self._user)
         def setChan(self, chan):
                 self._chan = chan       
         def setText(self, text):
@@ -74,7 +79,7 @@ class PluginManager():
                             if obj.builtin:
                                 obj.bot = self.bot
                         except:
-                            obj.level = 0
+                            obj.level = -1
                             obj.builtin = 0
                             obj.bot = ""
                         #print("--Registering {}".format(obj.keyword))

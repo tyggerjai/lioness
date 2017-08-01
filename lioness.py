@@ -9,6 +9,7 @@ import re
 import yaml
 import logging
 from logging.handlers import TimedRotatingFileHandler
+import datetime
 
 
 
@@ -37,8 +38,7 @@ class Lioness():
         """Takes config dict and logger object to initialise """
         self.verbose = 1
         self.log = log
-        self.status = "ok"
-
+        self.status = "ok"        
         try:
             token = config['APIKEY'].strip()
             self.sc = SlackClient(token)
@@ -54,6 +54,10 @@ class Lioness():
         self.chanman = ChannelManager()
         self.channels = self.chanman.get_channels()
 
+
+        self.scheduler = Scheduler(dbconn = self.dbconn, log = self.log)
+
+
         self.people = UserManager(self.dbconn, self.sc)
         self.people.set_ops(config['owners'])
         self.people.update_users()
@@ -64,14 +68,13 @@ class Lioness():
         
         self.log.info("Channels to join:")
         self.log.info(self.channels['join'])
-
+        self.job = dict()
         
 
     def connect_to_server(self):
       self.log.critical("Connecting")  
       if (self.sc.rtm_connect()):
         self.log.critical("Connected")  
-        self.ping_owners("Here I am!")
         return 1
       return 0
 
@@ -87,6 +90,17 @@ class Lioness():
         self.log.debug( resp)
         return resp
 
+    def send_im(self, userID, message):
+            self.log.debug("Opening IM for {}".format(userID))
+            try: 
+                resp = self.sc.api_call("im.open", user = userID)
+                self.log.debug(resp)
+                chat = resp['channel']['id']
+                self.log.debug("sending to im chan {}".format(chat))
+                resp = self.chanpost(chat, message)
+                self.log.debug(resp)
+            except:
+                self.log.debug("YEah, nah {}".format(sys.exc_info()[1]))
 
     def ping_owners(self,message):
         for op in self.people.get_owners():
@@ -149,28 +163,31 @@ class Lioness():
         # probably a bot
             self.people.check_and_add(user)
                         
-        if (re.match("^<https?://", txt)):
-            txt = '!store ' + txt 
+            if (re.match("^<https?://", txt)):
+                txt = '!store ' + txt 
 
-        if (re.match('!', txt)):
-            self.log.debug( "COMMAND MESSAGE {}".format(txt))
-            txt = txt.split()
+            if (re.match('!', txt)):
+                self.log.debug( "COMMAND MESSAGE {}".format(txt))
+                txt = txt.split()
 
-            commandargs = CommandArgs()
+                commandargs = CommandArgs()
                         
-            commandargs.chan = cname
-            commandargs.user = user
-            commandargs.command = txt[0][1:]
-            commandargs.text = ' '
+                commandargs.chan = cname
+                commandargs.user = user
+                commandargs.command = txt[0][1:]
+                commandargs.text = ' '
         
-            if (len(txt) > 1):
-                commandargs.text = ' '.join(txt[1:])
+                if (len(txt) > 1):
+                    commandargs.text = ' '.join(txt[1:])
                     
-            return(self.commander.handle(commandargs))
+                return(self.commander.handle(commandargs))
 
+    def get_next_job(self):
+        self.job = self.scheduler.get_next_job()
 
     def listen(self):
         _connect = 1
+        self.get_next_job()
         while(_connect):
             # HUP received, reload the plugins, disconnect from the server and reconnect
             if (_connect == 2):
@@ -185,7 +202,19 @@ class Lioness():
             
 
             time.sleep(0.5)
+            # Ok, this is how this should work.
+            # Get the next job, put the time here. When now() 
+            # has past the job time, do the job, get the next job time, etc.
+            # need to add jobs to the main list as well.
+            if ("time" in self.job ):
+                while( datetime.datetime.now() > self.job["time"]):
+            # Do the job
+                    print("Oh, now we're doing the job\n" + str(self.job))
+                    self.scheduler.job_done(self.job["id"])
+                    self.get_next_job()
+                    
 
+           
             for chan in self.channels['watching']:
                 cname = "#"+ self.chanman.get_name(chan)
                 resp = self.sc.api_call("channels.history",
@@ -194,7 +223,8 @@ class Lioness():
                 if "messages" in resp:
                   reply = self.parse_response(resp, cname)
                   if reply and self.verbose:
-                    self.chanpost("#bot_testing", reply.getText())
+                    self.send_im(reply.getUser(), reply.getText())
+                    self.chanpost("#bot_testing", reply.getUser() + " : " + reply.getText())
 
 
                 
@@ -225,6 +255,7 @@ if __name__ == '__main__':
     from channel import ChannelManager
     from users import UserManager
     from commander import Commander, CommandArgs
+    from schedule import Scheduler
     
     log = logging.getLogger("Rotating Log")
     log.setLevel(conf['debug_lvl'])
