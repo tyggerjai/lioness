@@ -12,8 +12,6 @@ from logging.handlers import TimedRotatingFileHandler
 import datetime
 
 
-
-
 def load_configs(cfile):
     """Load the config from the given absolute path file name"""
     try:
@@ -99,8 +97,10 @@ class Lioness():
                 self.log.debug("sending to im chan {}".format(chat))
                 resp = self.chanpost(chat, message)
                 self.log.debug(resp)
+                return True
             except:
-                self.log.debug("YEah, nah {}".format(sys.exc_info()[1]))
+                self.log.debug("Yeah, nah {}".format(sys.exc_info()[1]))
+                return False
 
     def ping_owners(self,message):
         for op in self.people.get_owners():
@@ -210,9 +210,20 @@ class Lioness():
                 while( datetime.datetime.now() > self.job["time"]):
             # Do the job
                     print("Oh, now we're doing the job\n" + str(self.job))
+                    comm = CommandArgs()
+                    comm.user = dict()
+                    comm.user["user"] = self.people.build_user_from_id(self.job["userID"])
+                    comm.chan = self.job["userID"]
+                    comm.command=self.job["job"]
+                    comm.text = " ".join((self.job["targetID"], self.job["args"]))
+                    response = self.commander.handle(comm)
+                    self.log.critical("JOB DONE: {}".format(response.getText()))
                     self.scheduler.job_done(self.job["id"])
                     self.get_next_job()
-                    
+                    if not "time" in self.job:
+                        break
+            else:
+                self.get_next_job()
 
            
             for chan in self.channels['watching']:

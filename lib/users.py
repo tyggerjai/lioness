@@ -37,6 +37,13 @@ class UserManager():
                         self.update_user(user)
 
                 return self.error
+        def build_user_from_id(self,userID):
+                user = dict()
+                self.error = self.dbconn.query("SELECT userID,name FROM users WHERE `userID` = %s", [userID,] )
+                user["id"] = self.error[0][0]
+                user["name"] = self.error[0][1]
+                return user
+                    
 
         def get_user_level(self,userID):
                 levels = self.dbconn.query("SELECT level FROM users WHERE `userID` = %s", [userID,] )
@@ -64,6 +71,11 @@ class UserManager():
                 return self.error       
 
         #def removeop(self, id):
+        def user_id_by_name(self, name):
+            self.error = list()
+            self.error = self.dbconn.query("SELECT `userID` FROM `users` WHERE `name` = %s", [name,] )
+            return self.error[0]
+
         def user_by_name(self, name):
                 self.error = list()
                 if re.match('<@', name):

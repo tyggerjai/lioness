@@ -55,20 +55,20 @@ class remind(Plugin):
             
         remindtime = time.strftime('%Y-%m-%d %H:%M:%S', maybetime[0]) 
        
-        user = args.user["user"]["name"]
+        user = self.bot.people.user_id_by_name(args.user["user"]["name"])
         if (text[0] == "me"):
             text = text[1:]
         else:
-            tryuser = self.bot.people.user_by_name(text[0])
+            tryuser = self.bot.people.user_id_by_name(text[0])
 
             if (tryuser):
-                user = tryuser[0][0]
+                user = tryuser[0]
                 self.bot.log.critical(user)
                 text = text[1:]
             
         if text[0] == "to":
             text = text[1:]
-        self.add_job((args.user["user"]["id"], user, "text", remindtime, " ".join(text) ))
+        self.add_job((args.user["user"]["id"], user, "tell", remindtime, " ".join(text) ))
         self.response.setText("Reminding {} at {} : {}".format(user, remindtime, " ".join(text)))
         
         return self.response
