@@ -63,7 +63,6 @@ class remind(Plugin):
 
             if (tryuser):
                 user = tryuser[0]
-                self.bot.log.critical(user)
                 text = text[1:]
             
         if text[0] == "to":

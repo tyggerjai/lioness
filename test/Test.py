@@ -4,6 +4,8 @@
 ########
 import unittest
 #import MySQLdb
+import sys
+sys.path.append("/home/solitaire/gits/lioness/lib/")
 from database import DataBase
 from users import UserManager
 from channel import ChannelManager

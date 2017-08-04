@@ -74,6 +74,8 @@ class UserManager():
         def user_id_by_name(self, name):
             self.error = list()
             self.error = self.dbconn.query("SELECT `userID` FROM `users` WHERE `name` = %s", [name,] )
+            print("User ID from name")
+            print(self.error)
             return self.error[0]
 
         def user_by_name(self, name):

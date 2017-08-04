@@ -157,7 +157,7 @@ class Lioness():
       for msg in response['messages']:
         self.ts = self.get_timestamp(msg)
         user = self.sc.api_call("users.info", user=msg.get('user'))
-        self.log.debug( "User object: {}".format(user))
+        #self.log.debug( "User object: {}".format(user))
         txt = msg.get('text', '')
         if not "error" in user:
         # probably a bot
@@ -249,7 +249,7 @@ if __name__ == '__main__':
     parser.add_argument('-p', '--prefix')
     parser.add_argument('-c', '--config')
     args = parser.parse_args()
-    print( args)
+    #print( args)
     PREFIX = args.prefix if args.prefix else "./"
     
     conf = args.config if args.config else "{0}/conf/conf.yaml".format(PREFIX)
@@ -273,6 +273,7 @@ if __name__ == '__main__':
     handler = TimedRotatingFileHandler( conf['prefix']+ "/log/lioness_log", when="d", interval=1, backupCount=7)
     log.addHandler(handler) 
 
+    log.critical("Starting bot...\n")  
     log.debug("CONFIGS: {}".format(conf))  
     
     lioness = Lioness(conf, log)  
