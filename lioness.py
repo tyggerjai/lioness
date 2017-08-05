@@ -271,6 +271,8 @@ if __name__ == '__main__':
     log = logging.getLogger("Rotating Log")
     log.setLevel(conf['debug_lvl'])
     handler = TimedRotatingFileHandler( conf['prefix']+ "/log/lioness_log", when="d", interval=1, backupCount=7)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
     log.addHandler(handler) 
 
     log.critical("Starting bot...\n")  
