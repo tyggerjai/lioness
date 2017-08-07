@@ -275,7 +275,7 @@ if __name__ == '__main__':
     handler.setFormatter(formatter)
     log.addHandler(handler) 
 
-    log.critical("Starting bot...\n")  
+    log.critical("\n-------------\n----------\nStarting bot...\n")  
     log.debug("CONFIGS: {}".format(conf))  
     
     lioness = Lioness(conf, log)  
