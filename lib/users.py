@@ -34,7 +34,8 @@ class UserManager():
         def update_users(self):
                 users = self.dbconn.query("SELECT `userID` FROM `users`", [])
                 for user in users:
-                        self.update_user(user)
+                    print("Updating {}".format(user[0])) 
+                    self.update_user(user[0])
 
                 return self.error
         def build_user_from_id(self,userID):
@@ -51,9 +52,12 @@ class UserManager():
                 return levels[0][0]
 
         def update_user(self, userID):
-                user_info = self.sc.api_call("users.info", user=userID)
-               # print("Updating {0}\n".format(user_info["user"]["name"]))
-                self.error = self.dbconn.query("UPDATE `users` SET `name` = %s WHERE `userID` = %s", [user_info["user"]["name"], userID,] )
+                try:
+                    user_info = self.sc.api_call("users.info", user=userID)
+                    print("Updating {0}\n".format(user_info))
+                    self.error = self.dbconn.query("UPDATE `users` SET `name` = %s WHERE `userID` = %s", [user_info["user"]["name"], userID,] )
+                except: 
+                    self.error = "Could not get user info"
                 return self.error
 
         def check_user(self, userID):

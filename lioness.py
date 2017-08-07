@@ -200,8 +200,11 @@ class Lioness():
                 else:
                     _connect = 0
             
-
-            time.sleep(0.5)
+            # This might be done better with a queue to ensure rate
+            # limiting, but even if you get faster "response" at the
+            # bot end, we'd thriottle the response at the slack
+            # server, so eh.
+            time.sleep(1)
             # Ok, this is how this should work.
             # Get the next job, put the time here. When now() 
             # has past the job time, do the job, get the next job time, etc.
@@ -227,22 +230,18 @@ class Lioness():
 
            
             for chan in self.channels['watching']:
-                cname = "#"+ self.chanman.get_name(chan)
-                resp = self.sc.api_call("channels.history",
-                    channel=chan, oldest = self.ts 
-                    )
-                if "messages" in resp:
-                  reply = self.parse_response(resp, cname)
-                  if reply and self.verbose:
-                    self.send_im(reply.getUser(), reply.getText())
-                    self.chanpost("#bot_testing", reply.getUser() + " : " + reply.getText())
+                try: 
+                    cname = "#"+ self.chanman.get_name(chan)
+                    resp = self.sc.api_call("channels.history", channel=chan, oldest = self.ts )
 
-
-                
-
+                    if "messages" in resp:
+                        reply = self.parse_response(resp, cname)
+                        if reply and self.verbose:
+                            self.send_im(reply.getUser(), reply.getText())
+                            self.chanpost("#bot_testing", reply.getUser() + " : " + reply.getText())
+                except:
+                    self.log.critical("Something went wrong at 232: {}".format(sys.exc_info()[1]))
             
-
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
