@@ -25,7 +25,7 @@ class store(Plugin):
 
             users = self.dbconn.query("SELECT `title`, `name` FROM `users`", [])
             resp = "TISM know the following people obey the TED commandments: \n"
-            print(users)
+            #print(users)
             for user in users:
                 if (user[0]):
                     resp += "{} ".format(user[0])    

@@ -35,7 +35,7 @@ class DataBase():
                                 r =  c.fetchall()
                                 self.conn.commit()
                         except MySQLdb.Error as e:
-                                print(e)
+                                #print(e)
                                 r = ErrorMessage(e)
                         return r
 
