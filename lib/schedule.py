@@ -20,7 +20,7 @@ class Scheduler():
         self.log.critical(resp)
         return resp 
     def do_job(self, job):
-        print("Doing {0}".format(job["id"]))
+        #print("Doing {0}".format(job["id"]))
         self.job_done(job["id"])
     def job_done(self, jobid):
         self.log.warning("Marked {} As done".format(jobid))

@@ -34,7 +34,7 @@ class UserManager():
         def update_users(self):
                 users = self.dbconn.query("SELECT `userID` FROM `users`", [])
                 for user in users:
-                    print("Updating {}".format(user[0])) 
+                    #print("Updating {}".format(user[0])) 
                     self.update_user(user[0])
 
                 return self.error
@@ -48,13 +48,13 @@ class UserManager():
 
         def get_user_level(self,userID):
                 levels = self.dbconn.query("SELECT level FROM users WHERE `userID` = %s", [userID,] )
-                print(levels)
+                #print(levels)
                 return levels[0][0]
 
         def update_user(self, userID):
                 try:
                     user_info = self.sc.api_call("users.info", user=userID)
-                    print("Updating {0}\n".format(user_info))
+                    #print("Updating {0}\n".format(user_info))
                     self.error = self.dbconn.query("UPDATE `users` SET `name` = %s WHERE `userID` = %s", [user_info["user"]["name"], userID,] )
                 except: 
                     self.error = "Could not get user info"
@@ -71,23 +71,23 @@ class UserManager():
 
                 if not exists:
                         self.error = self.dbconn.query("INSERT INTO `users`(`userID`,  `name`) VALUES(%s, %s)", [user["user"]["id"], user["user"]["name"],] )
-                        print(self.error)
+                        #print(self.error)
                 return self.error       
 
         #def removeop(self, id):
         def user_id_by_name(self, name):
             self.error = list()
             self.error = self.dbconn.query("SELECT `userID` FROM `users` WHERE `name` = %s", [name,] )
-            print("User ID from name")
-            print(self.error)
+            #print("User ID from name")
+            #print(self.error)
             return self.error[0]
 
         def user_by_name(self, name):
                 self.error = list()
                 if re.match('<@', name):
-                    print("Tokenizing {}".format(name))
+                    #print("Tokenizing {}".format(name))
                     uid = self.detokenize(name)
-                    print("Searching for {}".format(uid))
+                    #print("Searching for {}".format(uid))
                 
                     self.error = self.dbconn.query("SELECT `name` FROM `users` WHERE `userID` = %s", [uid,] )
                 else:
@@ -95,9 +95,9 @@ class UserManager():
                 return self.error 
 
         def detokenize(self, text):
-            print(text)
+            #print(text)
             text = re.sub("<@", "", text)
-            print(text)
+            #print(text)
             text = re.sub(">", "", text)
-            print(text)
+            #print(text)
             return text
