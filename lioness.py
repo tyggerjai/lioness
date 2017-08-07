@@ -209,7 +209,7 @@ class Lioness():
             if ("time" in self.job ):
                 while( datetime.datetime.now() > self.job["time"]):
             # Do the job
-                    print("Oh, now we're doing the job\n" + str(self.job))
+                    #print("Oh, now we're doing the job\n" + str(self.job))
                     comm = CommandArgs()
                     comm.user = dict()
                     comm.user["user"] = self.people.build_user_from_id(self.job["userID"])
