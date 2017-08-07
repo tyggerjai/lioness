@@ -3,6 +3,7 @@
 ######
 import sys
 import time
+import re
 from pytz import timezone
 import parsedatetime.parsedatetime as pdt
 from datetime import datetime, timedelta
@@ -26,8 +27,7 @@ class remind(Plugin):
         self.level = -1
 
         self.cal = pdt.Calendar()
-        self.usage = """ remind [user] [time] <message>. Defaults to
-        "me",  "tomorrow"  """
+        self.usage = """ remind <user> [time] to  <message>. Time defaults to "tomorrow"  """
 
     def add_job(self, args):
         self.bot.get_next_job()
@@ -37,37 +37,40 @@ class remind(Plugin):
 
     def command(self, args):
         self.response.setText(self.usage)
-        text = args.text.split(" ")
-        self.bot.log.critical(text[0])
-        remindtime = ""
-        user = ""
-        reminder = ""
-        if len(text) < 1: #username, message
-            self.response.setText(usage)
+        params = ""
+        if (re.search(" to " , args.text)): 
+            params = args.text.split(" to ", 1)
+        else:
+            self.bot.log.debug("No separator found")
+            return self.response
+        
+        if len(params) < 2: #username, message
+            self.bot.log.debug("Bad params: \n{0}\n{1}".format(params[0], params[1]))
             return self.response
 
+        target, remindtime = params[0].split(" ", 1)
+        
+        reminder = " ".join(params[1:])
+
+
         try:
-            maybetime = self.cal.parse(args.text)
-            print("Time from {}".format(args.text))
-            print(maybetime)
+            maybetime = self.cal.parse(remindtime)
+            self.bot.log.debug("Time from {0}: {1}".format(remindtime, maybetime))
         except:
             maybetime = self.cal.parse("tomorrow")
             
         remindtime = time.strftime('%Y-%m-%d %H:%M:%S', maybetime[0]) 
-       
-        user = self.bot.people.user_id_by_name(args.user["user"]["name"])
-        if (text[0] == "me"):
-            text = text[1:]
-        else:
-            tryuser = self.bot.people.user_id_by_name(text[0])
+      
+        if (target == "me"):
+            target = self.bot.people.user_id_by_name(args.user["user"]["name"])
+        else :
+            tryuser = self.bot.people.user_id_by_name(target)
 
             if (tryuser):
-                user = tryuser[0]
-                text = text[1:]
+                target = tryuser[0]
             
-        if text[0] == "to":
-            text = text[1:]
-        self.add_job((args.user["user"]["id"], user, "tell", remindtime, " ".join(text) ))
-        self.response.setText("Reminding {} at {} : {}".format(user, remindtime, " ".join(text)))
+        self.add_job((args.user["user"]["id"], target, "tell", remindtime, reminder ))
+        self.bot.get_next_job()
+        self.response.setText("Reminding {} at {} : {}".format(target, remindtime, reminder))
         
         return self.response
