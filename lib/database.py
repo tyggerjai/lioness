@@ -36,7 +36,7 @@ class DataBase():
                                 self.conn.commit()
                         except MySQLdb.Error as e:
                                 #print(e)
-                                r = ErrorMessage(e)
+                                r = repr(e)
                         return r
 
                 
