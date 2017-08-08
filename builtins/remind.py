@@ -48,8 +48,12 @@ class remind(Plugin):
             self.bot.log.debug("Bad params: \n{0}\n{1}".format(params[0], params[1]))
             return self.response
 
-        target, remindtime = params[0].split(" ", 1)
-        
+        target = "me"
+        remindtime = "tomorrow"
+        if (re.search(" ", params[0])): 
+            target, remindtime = params[0].split(" ", 1)
+        else: 
+            target = params[0]
         reminder = " ".join(params[1:])
 
 
