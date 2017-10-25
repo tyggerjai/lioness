@@ -6,8 +6,7 @@
 class ChannelManager():
         lookup = dict()
         revlookup = dict()
-        channels = { "join": ("bot_testing","general", "random",
-        "botsbeersandbots"),
+        channels = { "join": ("bot_testing","general", "random", "control_porn", "botsbeersandbots"),
                         "known": list(),
                         "watching": list()
         }
